@@ -1,5 +1,4 @@
 import logging
-import logging.handlers
 from pathlib import Path
 
 LOG_DIR = Path("logs")
@@ -11,14 +10,12 @@ _DATEFMT = "%Y-%m-%d %H:%M:%S"
 
 def setup_logging(level: str = "INFO") -> None:
     LOG_DIR.mkdir(exist_ok=True)
-
     formatter = logging.Formatter(fmt=_FORMAT, datefmt=_DATEFMT, style="{")
 
-    file_handler = logging.handlers.RotatingFileHandler(
+    file_handler = logging.FileHandler(
         filename=LOG_FILE,
+        mode="w",
         encoding="utf-8",
-        maxBytes=5 * 1024 * 1024,
-        backupCount=5,
     )
     file_handler.setFormatter(formatter)
 

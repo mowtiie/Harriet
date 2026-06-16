@@ -18,16 +18,53 @@ if not config.TOKEN:
     log.critical("DISCORD_TOKEN is missing. Add it to your .env file.")
     sys.exit(1)
 
+
+STATUS_MAP = {
+    "online": discord.Status.online,
+    "idle": discord.Status.idle,
+    "dnd": discord.Status.dnd,
+    "invisible": discord.Status.invisible,
+}
+
+ACTIVITY_MAP = {
+    "playing": discord.ActivityType.playing,
+    "listening": discord.ActivityType.listening,
+    "watching": discord.ActivityType.watching,
+    "competing": discord.ActivityType.competing,
+}
+
+
+def build_presence(status: str, activity_type: str, activity_name: str):
+    discord_status = STATUS_MAP.get(status.lower(), discord.Status.online)
+    activity = discord.Activity(
+        type=ACTIVITY_MAP.get(activity_type.lower(), discord.ActivityType.playing),
+        name=activity_name,
+    )
+    return discord_status, activity
+
+
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
 
 bot = commands.Bot(command_prefix=config.COMMAND_PREFIX, intents=intents)
+bot.build_presence = build_presence
+
 
 @bot.event
 async def on_ready():
     log.info(f"Logged in as {bot.user} (ID: {bot.user.id})")
     log.info(f"Connected to {len(bot.guilds)} guild(s)")
+
+    status, activity = build_presence(
+        config.BOT_STATUS, config.BOT_ACTIVITY_TYPE, config.BOT_ACTIVITY_NAME
+    )
+    await bot.change_presence(status=status, activity=activity)
+    log.info(
+        f"Presence: {config.BOT_STATUS} | "
+        f"{config.BOT_ACTIVITY_TYPE} {config.BOT_ACTIVITY_NAME}"
+    )
+
     try:
         synced = await bot.tree.sync()
         log.info(f"Synced {len(synced)} slash command(s)")
@@ -42,6 +79,9 @@ async def on_command_error(ctx: commands.Context, error: commands.CommandError):
     if isinstance(error, commands.MissingPermissions):
         await ctx.send("You don't have permission to do that.")
         return
+    if isinstance(error, commands.NotOwner):
+        await ctx.send("This command is restricted to the bot owner.")
+        return
     if isinstance(error, commands.MissingRequiredArgument):
         await ctx.send(f"Missing argument: `{error.param.name}`")
         return
@@ -50,8 +90,7 @@ async def on_command_error(ctx: commands.Context, error: commands.CommandError):
         return
 
     log.error(
-        f"Unhandled error in '{ctx.command}' invoked by {ctx.author} "
-        f"in #{ctx.channel}",
+        f"Unhandled error in '{ctx.command}' invoked by {ctx.author} in #{ctx.channel}",
         exc_info=error,
     )
     await ctx.send("Something went wrong. The error has been logged.")
