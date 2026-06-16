@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 TOKEN = os.getenv("DISCORD_TOKEN")
-COMMAND_PREFIX = os.getenv("COMMAND_PREFIX", "!")
+COMMAND_PREFIX = os.getenv("COMMAND_PREFIX", "do ")
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 
 BOT_STATUS = os.getenv("BOT_STATUS", "online")

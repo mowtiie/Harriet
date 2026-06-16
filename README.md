@@ -48,13 +48,13 @@ python bot.py
 
 All settings live in `.env`:
 
-| Variable | Description | Default |
-| --- | --- | --- |
-| `DISCORD_TOKEN` | Bot token (required) | — |
-| `COMMAND_PREFIX` | Prefix for text commands | `!` |
-| `LOG_LEVEL` | `DEBUG`, `INFO`, `WARNING`, `ERROR` | `INFO` |
-| `BOT_STATUS` | `online`, `idle`, `dnd`, `invisible` | `online` |
-| `BOT_ACTIVITY_TYPE` | `playing`, `listening`, `watching`, `competing` | `playing` |
+| Variable | Description | Default           |
+| --- | --- |-------------------|
+| `DISCORD_TOKEN` | Bot token (required) | —                 |
+| `COMMAND_PREFIX` | Prefix for text commands | `do `             |
+| `LOG_LEVEL` | `DEBUG`, `INFO`, `WARNING`, `ERROR` | `INFO`            |
+| `BOT_STATUS` | `online`, `idle`, `dnd`, `invisible` | `online`          |
+| `BOT_ACTIVITY_TYPE` | `playing`, `listening`, `watching`, `competing` | `playing`         |
 | `BOT_ACTIVITY_NAME` | Text shown after the activity type | `with discord.py` |
 
 The bot owner can also change presence at runtime with `/setpresence`.
