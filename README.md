@@ -58,6 +58,8 @@ All settings live in `.env`:
 | `BOT_ACTIVITY_NAME` | Text shown after the activity type | `with discord.py` |
 | `MAX_CLEAR_AMOUNT` | Most messages `clear` can delete at once | `100`             |
 
+Invalid values for `LOG_LEVEL`, `BOT_STATUS`, `BOT_ACTIVITY_TYPE` or `MAX_CLEAR_AMOUNT` stop startup with an error naming the variable.
+
 The bot owner can also change presence at runtime with `/setpresence`.
 
 ## Commands
@@ -82,6 +84,12 @@ discord-bot/
 │   ├── moderation.py
 │   └── presence.py
 └── logs/              Generated at runtime
+```
+
+## Tests
+
+```
+python -m unittest discover -s tests -t .
 ```
 
 ## Adding Commands

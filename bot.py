@@ -1,3 +1,5 @@
+"""Entry point: builds the bot, wires global handlers and starts it."""
+
 import asyncio
 import logging
 import sys
@@ -12,52 +14,12 @@ from error_messages import GENERIC_ERROR_MESSAGE, describe_error
 from logger import setup_logging
 from presence_utils import build_presence
 
-setup_logging(config.LOG_LEVEL)
 log = logging.getLogger("bot")
-
-if not config.TOKEN:
-    log.critical("DISCORD_TOKEN is missing. Add it to your .env file.")
-    sys.exit(1)
-
 
 COGS_DIR = Path(__file__).parent / "cogs"
 
-intents = discord.Intents.default()
-intents.message_content = True
-intents.members = True
 
-initial_status, initial_activity = build_presence(
-    config.BOT_STATUS, config.BOT_ACTIVITY_TYPE, config.BOT_ACTIVITY_NAME
-)
-
-bot = commands.Bot(
-    command_prefix=config.COMMAND_PREFIX,
-    intents=intents,
-    status=initial_status,
-    activity=initial_activity,
-)
-
-
-@bot.event
-async def setup_hook():
-    """Load cogs and sync slash commands once, before the first connect."""
-    await load_cogs()
-    try:
-        synced = await bot.tree.sync()
-        log.info(f"Synced {len(synced)} slash command(s)")
-    except Exception:
-        log.exception("Slash command sync failed")
-
-
-@bot.event
-async def on_ready():
-    """Log connection details; runs again on every reconnect."""
-    log.info(f"Logged in as {bot.user} (ID: {bot.user.id})")
-    log.info(f"Connected to {len(bot.guilds)} guild(s)")
-
-
-@bot.event
-async def on_command_error(ctx: commands.Context, error: commands.CommandError):
+async def on_command_error(ctx: commands.Context, error: commands.CommandError) -> None:
     """Reply to prefix and hybrid command failures, logging unexpected ones."""
     if isinstance(error, commands.CommandNotFound):
         return
@@ -72,10 +34,9 @@ async def on_command_error(ctx: commands.Context, error: commands.CommandError):
     await ctx.send(message, ephemeral=True)
 
 
-@bot.tree.error
 async def on_app_command_error(
     interaction: discord.Interaction, error: app_commands.AppCommandError
-):
+) -> None:
     """Reply to plain slash command failures, logging unexpected ones."""
     message = describe_error(error)
     if message is None:
@@ -91,13 +52,13 @@ async def on_app_command_error(
         await interaction.response.send_message(message, ephemeral=True)
 
 
-@bot.event
-async def on_error(event_method: str, *args, **kwargs):
+async def on_error(event_method: str, *args: object, **kwargs: object) -> None:
     """Log exceptions raised inside event handlers."""
     log.exception(f"Unhandled exception in event '{event_method}'")
 
 
-async def load_cogs():
+async def load_cogs(bot: commands.Bot) -> None:
+    """Load every public module in the cogs directory, logging failures."""
     for path in sorted(COGS_DIR.glob("[!_]*.py")):
         extension = f"cogs.{path.stem}"
         try:
@@ -107,13 +68,62 @@ async def load_cogs():
             log.exception(f"Failed to load cog: {extension}")
 
 
-async def main():
+def create_bot() -> commands.Bot:
+    """Build the bot with intents, initial presence and global handlers."""
+    intents = discord.Intents.default()
+    intents.message_content = True
+    intents.members = True
+
+    status, activity = build_presence(
+        config.BOT_STATUS, config.BOT_ACTIVITY_TYPE, config.BOT_ACTIVITY_NAME
+    )
+    bot = commands.Bot(
+        command_prefix=config.COMMAND_PREFIX,
+        intents=intents,
+        status=status,
+        activity=activity,
+    )
+
+    async def setup_hook() -> None:
+        """Load cogs and sync slash commands once, before the first connect."""
+        await load_cogs(bot)
+        try:
+            synced = await bot.tree.sync()
+            log.info(f"Synced {len(synced)} slash command(s)")
+        except Exception:
+            log.exception("Slash command sync failed")
+
+    async def on_ready() -> None:
+        """Log connection details; runs again on every reconnect."""
+        log.info(f"Logged in as {bot.user} (ID: {bot.user.id})")
+        log.info(f"Connected to {len(bot.guilds)} guild(s)")
+
+    bot.event(setup_hook)
+    bot.event(on_ready)
+    bot.event(on_command_error)
+    bot.event(on_error)
+    bot.tree.error(on_app_command_error)
+    return bot
+
+
+async def run(bot: commands.Bot) -> None:
+    """Connect the bot to Discord and block until it stops."""
     async with bot:
         await bot.start(config.TOKEN)
 
 
-if __name__ == "__main__":
+def main() -> None:
+    """Configure logging, check the token and run the bot."""
+    setup_logging(config.LOG_LEVEL)
+    if not config.TOKEN:
+        log.critical("DISCORD_TOKEN is missing. Add it to your .env file.")
+        sys.exit(1)
+
     try:
-        asyncio.run(main())
+        asyncio.run(run(create_bot()))
     except KeyboardInterrupt:
         log.info("Bot stopped by user")
+
+
+if __name__ == "__main__":
+    main()
