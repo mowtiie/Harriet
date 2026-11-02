@@ -56,6 +56,7 @@ All settings live in `.env`:
 | `BOT_STATUS` | `online`, `idle`, `dnd`, `invisible` | `online`          |
 | `BOT_ACTIVITY_TYPE` | `playing`, `listening`, `watching`, `competing` | `playing`         |
 | `BOT_ACTIVITY_NAME` | Text shown after the activity type | `with discord.py` |
+| `MAX_CLEAR_AMOUNT` | Most messages `clear` can delete at once | `100`             |
 
 The bot owner can also change presence at runtime with `/setpresence`.
 

@@ -10,3 +10,5 @@ LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 BOT_STATUS = os.getenv("BOT_STATUS", "online")
 BOT_ACTIVITY_TYPE = os.getenv("BOT_ACTIVITY_TYPE", "playing")
 BOT_ACTIVITY_NAME = os.getenv("BOT_ACTIVITY_NAME", "with discord.py")
+
+MAX_CLEAR_AMOUNT = int(os.getenv("MAX_CLEAR_AMOUNT", "100"))

@@ -5,7 +5,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-import bot as bot_module
+from presence_utils import build_presence
 
 log = logging.getLogger(__name__)
 
@@ -32,7 +32,7 @@ class Presence(commands.Cog):
         *,
         text: str,
     ):
-        discord_status, activity = bot_module.build_presence(status, activity_type, text)
+        discord_status, activity = build_presence(status, activity_type, text)
         await self.bot.change_presence(status=discord_status, activity=activity)
         log.info(
             f"{ctx.author} changed presence to: {status} | {activity_type} {text}"
