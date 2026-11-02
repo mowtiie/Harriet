@@ -23,7 +23,9 @@ class Moderation(commands.Cog):
         self.bot = bot
 
     @commands.hybrid_command(name="clear", description="Delete the last N messages in this channel")
+    @commands.guild_only()
     @commands.has_permissions(manage_messages=True)
+    @commands.bot_has_permissions(manage_messages=True, read_message_history=True)
     @app_commands.describe(amount="How many messages to delete (default 5)")
     async def clear(
         self,
