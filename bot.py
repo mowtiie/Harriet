@@ -1,5 +1,3 @@
-"""Entry point: builds the bot, wires global handlers and starts it."""
-
 import asyncio
 import logging
 import sys
@@ -20,7 +18,6 @@ COGS_DIR = Path(__file__).parent / "cogs"
 
 
 async def on_command_error(ctx: commands.Context, error: commands.CommandError) -> None:
-    """Reply to prefix and hybrid command failures, logging unexpected ones."""
     if isinstance(error, commands.CommandNotFound):
         return
 
@@ -43,7 +40,6 @@ async def on_command_error(ctx: commands.Context, error: commands.CommandError) 
 async def on_app_command_error(
     interaction: discord.Interaction, error: app_commands.AppCommandError
 ) -> None:
-    """Reply to plain slash command failures, logging unexpected ones."""
     message = describe_error(error)
     if message is None:
         log.error(
@@ -59,12 +55,10 @@ async def on_app_command_error(
 
 
 async def on_error(event_method: str, *args: object, **kwargs: object) -> None:
-    """Log exceptions raised inside event handlers."""
     log.exception(f"Unhandled exception in event '{event_method}'")
 
 
 async def load_cogs(bot: commands.Bot) -> None:
-    """Load every public module in the cogs directory, logging failures."""
     for path in sorted(COGS_DIR.glob("[!_]*.py")):
         extension = f"cogs.{path.stem}"
         try:
@@ -75,7 +69,6 @@ async def load_cogs(bot: commands.Bot) -> None:
 
 
 def create_bot() -> commands.Bot:
-    """Build the bot with intents, initial presence and global handlers."""
     intents = discord.Intents.default()
     intents.message_content = True
     intents.members = True
@@ -91,7 +84,7 @@ def create_bot() -> commands.Bot:
     )
 
     async def setup_hook() -> None:
-        """Load cogs and sync slash commands once, before the first connect."""
+        """Runs once per process, unlike on_ready."""
         await load_cogs(bot)
         try:
             synced = await bot.tree.sync()
@@ -100,7 +93,7 @@ def create_bot() -> commands.Bot:
             log.exception("Slash command sync failed")
 
     async def on_ready() -> None:
-        """Log connection details; runs again on every reconnect."""
+        """Runs again on every reconnect, so only log here."""
         log.info(f"Logged in as {bot.user} (ID: {bot.user.id})")
         log.info(f"Connected to {len(bot.guilds)} guild(s)")
 
@@ -113,13 +106,11 @@ def create_bot() -> commands.Bot:
 
 
 async def run(bot: commands.Bot) -> None:
-    """Connect the bot to Discord and block until it stops."""
     async with bot:
         await bot.start(config.TOKEN)
 
 
 def main() -> None:
-    """Configure logging, check the token and run the bot."""
     setup_logging(config.LOG_LEVEL)
     if not config.TOKEN:
         log.critical("DISCORD_TOKEN is missing. Add it to your .env file.")

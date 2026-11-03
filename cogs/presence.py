@@ -32,7 +32,6 @@ class Presence(commands.Cog):
         *,
         text: str,
     ) -> None:
-        """Change the bot's status and activity at runtime."""
         if ctx.interaction:
             await ctx.defer(ephemeral=True)
 

@@ -1,5 +1,3 @@
-"""User-facing messages for expected command errors."""
-
 from discord import app_commands
 from discord.ext import commands
 
@@ -7,10 +5,7 @@ GENERIC_ERROR_MESSAGE = "Something went wrong. The error has been logged."
 
 
 def describe_error(error: Exception) -> str | None:
-    """Return a user-friendly message for an expected error, else ``None``.
-
-    ``None`` means the error is unexpected and should be logged in full.
-    """
+    """Return a user-facing message, or None if the error is unexpected."""
     if isinstance(error, (commands.MissingPermissions, app_commands.MissingPermissions)):
         return "You don't have permission to do that."
     if isinstance(error, commands.BotMissingPermissions):

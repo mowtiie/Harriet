@@ -1,5 +1,3 @@
-"""Settings loaded from the environment (``.env``) and validated at import time."""
-
 import os
 from collections.abc import Collection
 
@@ -11,14 +9,10 @@ LOG_LEVELS = ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")
 
 
 class ConfigError(ValueError):
-    """Raised when an environment variable holds an unusable value."""
+    pass
 
 
 def parse_choice(name: str, raw: str, allowed: Collection[str]) -> str:
-    """Return `raw` normalized to lowercase if it is one of `allowed`.
-
-    `allowed` values are compared case-insensitively against `raw`.
-    """
     value = raw.strip().lower()
     if value not in {option.lower() for option in allowed}:
         options = ", ".join(allowed)
@@ -27,7 +21,6 @@ def parse_choice(name: str, raw: str, allowed: Collection[str]) -> str:
 
 
 def parse_positive_int(name: str, raw: str) -> int:
-    """Return `raw` as an integer greater than zero."""
     try:
         value = int(raw)
     except ValueError:

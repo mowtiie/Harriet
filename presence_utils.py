@@ -1,5 +1,3 @@
-"""Pure helpers for turning config strings into Discord presence objects."""
-
 import discord
 
 STATUS_MAP = {
@@ -20,10 +18,7 @@ ACTIVITY_MAP = {
 def build_presence(
     status: str, activity_type: str, activity_name: str
 ) -> tuple[discord.Status, discord.Activity]:
-    """Return the Discord status and activity for the given config strings.
-
-    Unknown values fall back to ``online`` and ``playing``.
-    """
+    """Unknown values fall back to online and playing."""
     discord_status = STATUS_MAP.get(status.lower(), discord.Status.online)
     activity = discord.Activity(
         type=ACTIVITY_MAP.get(activity_type.lower(), discord.ActivityType.playing),

@@ -1,5 +1,3 @@
-"""Moderation commands."""
-
 import logging
 
 from discord import app_commands
@@ -13,26 +11,19 @@ CONFIRMATION_DELETE_DELAY_SECONDS = 3
 
 
 def purge_limit(amount: int, invoked_by_message: bool) -> int:
-    """Return how many messages to scan so `amount` others are deleted.
-
-    A prefix invocation's own message is in the channel history and counts
-    toward the purge limit, so it needs one extra slot.
-    """
+    """Prefix commands also match their own message, so they need one extra slot."""
     return amount + 1 if invoked_by_message else amount
 
 
 def deleted_count(purged: int, invoked_by_message: bool) -> int:
-    """Return how many messages the user asked to delete, excluding the command itself."""
     return max(purged - 1, 0) if invoked_by_message else purged
 
 
 def clear_summary(count: int) -> str:
-    """Return the confirmation text shown after a clear."""
     return f"Deleted {count} message(s)."
 
 
 async def send_confirmation(ctx: commands.Context, text: str) -> None:
-    """Send a private reply for slash use, or a short-lived one for prefix use."""
     if ctx.interaction:
         await ctx.send(text, ephemeral=True)
         return
@@ -41,8 +32,6 @@ async def send_confirmation(ctx: commands.Context, text: str) -> None:
 
 
 class Moderation(commands.Cog):
-    """Commands for keeping channels tidy."""
-
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
@@ -56,7 +45,6 @@ class Moderation(commands.Cog):
         ctx: commands.Context,
         amount: app_commands.Range[int, 1, config.MAX_CLEAR_AMOUNT] = 5,
     ) -> None:
-        """Delete the last `amount` messages in the current channel."""
         invoked_by_message = ctx.interaction is None
         if not invoked_by_message:
             await ctx.defer(ephemeral=True)
@@ -71,5 +59,4 @@ class Moderation(commands.Cog):
 
 
 async def setup(bot: commands.Bot) -> None:
-    """Register the Moderation cog."""
     await bot.add_cog(Moderation(bot))
