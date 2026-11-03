@@ -31,7 +31,11 @@ class Presence(commands.Cog):
         activity_type: Literal["playing", "listening", "watching", "competing"],
         *,
         text: str,
-    ):
+    ) -> None:
+        """Change the bot's status and activity at runtime."""
+        if ctx.interaction:
+            await ctx.defer(ephemeral=True)
+
         discord_status, activity = build_presence(status, activity_type, text)
         await self.bot.change_presence(status=discord_status, activity=activity)
         log.info(

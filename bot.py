@@ -31,7 +31,13 @@ async def on_command_error(ctx: commands.Context, error: commands.CommandError) 
             exc_info=error,
         )
         message = GENERIC_ERROR_MESSAGE
-    await ctx.send(message, ephemeral=True)
+    try:
+        await ctx.send(message, ephemeral=True)
+    except discord.HTTPException:
+        log.warning(
+            f"Could not send error reply for '{ctx.command}'; the interaction may have expired",
+            exc_info=True,
+        )
 
 
 async def on_app_command_error(
