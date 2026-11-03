@@ -24,7 +24,10 @@ async def on_command_error(ctx: commands.Context, error: commands.CommandError) 
     message = describe_error(error)
     if message is None:
         log.error(
-            f"Unhandled error in '{ctx.command}' invoked by {ctx.author} in #{ctx.channel}",
+            "Unhandled error in '%s' invoked by %s in #%s",
+            ctx.command,
+            ctx.author,
+            ctx.channel,
             exc_info=error,
         )
         message = GENERIC_ERROR_MESSAGE
@@ -32,7 +35,8 @@ async def on_command_error(ctx: commands.Context, error: commands.CommandError) 
         await ctx.send(message, ephemeral=True)
     except discord.HTTPException:
         log.warning(
-            f"Could not send error reply for '{ctx.command}'; the interaction may have expired",
+            "Could not send error reply for '%s'; the interaction may have expired",
+            ctx.command,
             exc_info=True,
         )
 
@@ -43,8 +47,9 @@ async def on_app_command_error(
     message = describe_error(error)
     if message is None:
         log.error(
-            f"Unhandled error in slash command '{interaction.command}' "
-            f"invoked by {interaction.user}",
+            "Unhandled error in slash command '%s' invoked by %s",
+            interaction.command,
+            interaction.user,
             exc_info=error,
         )
         message = GENERIC_ERROR_MESSAGE
@@ -55,7 +60,7 @@ async def on_app_command_error(
 
 
 async def on_error(event_method: str, *args: object, **kwargs: object) -> None:
-    log.exception(f"Unhandled exception in event '{event_method}'")
+    log.exception("Unhandled exception in event '%s'", event_method)
 
 
 async def load_cogs(bot: commands.Bot) -> None:
@@ -63,9 +68,9 @@ async def load_cogs(bot: commands.Bot) -> None:
         extension = f"cogs.{path.stem}"
         try:
             await bot.load_extension(extension)
-            log.info(f"Loaded cog: {extension}")
+            log.info("Loaded cog: %s", extension)
         except Exception:
-            log.exception(f"Failed to load cog: {extension}")
+            log.exception("Failed to load cog: %s", extension)
 
 
 def create_bot() -> commands.Bot:
@@ -88,14 +93,14 @@ def create_bot() -> commands.Bot:
         await load_cogs(bot)
         try:
             synced = await bot.tree.sync()
-            log.info(f"Synced {len(synced)} slash command(s)")
+            log.info("Synced %d slash command(s)", len(synced))
         except Exception:
             log.exception("Slash command sync failed")
 
     async def on_ready() -> None:
         """Runs again on every reconnect, so only log here."""
-        log.info(f"Logged in as {bot.user} (ID: {bot.user.id})")
-        log.info(f"Connected to {len(bot.guilds)} guild(s)")
+        log.info("Logged in as %s (ID: %s)", bot.user, bot.user.id)
+        log.info("Connected to %d guild(s)", len(bot.guilds))
 
     bot.event(setup_hook)
     bot.event(on_ready)

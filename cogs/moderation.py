@@ -52,8 +52,12 @@ class Moderation(commands.Cog):
         purged = await ctx.channel.purge(limit=purge_limit(amount, invoked_by_message))
         count = deleted_count(len(purged), invoked_by_message)
         log.info(
-            f"{ctx.author} (id={ctx.author.id}) cleared {count} message(s) "
-            f"in #{ctx.channel} (guild={ctx.guild})"
+            "%s (id=%s) cleared %d message(s) in #%s (guild=%s)",
+            ctx.author,
+            ctx.author.id,
+            count,
+            ctx.channel,
+            ctx.guild,
         )
         await send_confirmation(ctx, clear_summary(count))
 

@@ -1,7 +1,6 @@
 import logging
 from typing import Literal
 
-import discord
 from discord import app_commands
 from discord.ext import commands
 
@@ -37,9 +36,7 @@ class Presence(commands.Cog):
 
         discord_status, activity = build_presence(status, activity_type, text)
         await self.bot.change_presence(status=discord_status, activity=activity)
-        log.info(
-            f"{ctx.author} changed presence to: {status} | {activity_type} {text}"
-        )
+        log.info("%s changed presence to: %s | %s %s", ctx.author, status, activity_type, text)
         await ctx.send(
             f"Presence updated: **{status}** | {activity_type} **{text}**",
             ephemeral=True,

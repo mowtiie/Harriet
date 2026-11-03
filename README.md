@@ -75,4 +75,4 @@ The bot does not collect, store or send user data anywhere, and has no analytics
 Logs are written only to `logs/bot.log` on the host machine and are cleared on every startup. They record bot lifecycle events, cog loads, errors with tracebacks, and moderation actions (who ran `clear`, where, and how many messages).
 ## License
 
-[MIT](LICENSE)
+Released under the [MIT License](LICENSE). You're free to use, modify and distribute Harriet, including commercially, as long as the copyright notice and license text are kept with any copies. It comes with no warranty.
