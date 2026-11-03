@@ -73,9 +73,6 @@ All settings live in `.env`. Invalid values stop startup with an error naming th
 The bot does not collect, store or send user data anywhere, and has no analytics or telemetry. It reads message content and member info only to run commands.
 
 Logs are written only to `logs/bot.log` on the host machine and are cleared on every startup. They record bot lifecycle events, cog loads, errors with tracebacks, and moderation actions (who ran `clear`, where, and how many messages).
-
-To report a vulnerability, see [SECURITY.md](SECURITY.md).
-
 ## License
 
 [MIT](LICENSE)
