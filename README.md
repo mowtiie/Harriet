@@ -4,18 +4,14 @@ Just a simple and helpful Discord bot that productively wants to make you happy.
 
 ## Features
 
-- Modular cog-based architecture
-- Hybrid commands — every command works as both `!cmd` and `/cmd`
-- Customizable presence and status (via `.env` or `/setpresence`)
+- Modular cog-based architecture, loaded automatically from `cogs/`
+- Hybrid commands: every command works as both `do cmd` and `/cmd`
+- Customizable presence (via `.env` or `/setpresence`)
 - Logging to file and console, cleared on every restart
-- Global error handling
 
-## Requirements
+## Setup
 
-- Python 3.10+
-- A Discord application and bot token
-
-## Installation
+Requires Python 3.10+ and a Discord bot token (see the next section).
 
 ```
 git clone https://github.com/mowtiie/Harriet.git
@@ -26,27 +22,31 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-Edit `.env` and add your bot token.
-
-## Running
+Edit `.env` and add your bot token, then start the bot:
 
 ```
 python bot.py
 ```
+
+To run the tests: `python -m unittest discover -s tests -t .`
 
 ## Discord Developer Portal Setup
 
 1. Go to https://discord.com/developers/applications and click **New Application**.
 2. Open the **Bot** tab. Click **Reset Token** and copy the value into `.env` as `DISCORD_TOKEN`.
 3. Under **Privileged Gateway Intents**, enable:
-   - Message Content Intent
-   - Server Members Intent
-4. Go to **OAuth2 → URL Generator**. Select scopes `bot` and `applications.commands`, then choose the permissions you need (at minimum: Send Messages, Read Message History; add Manage Messages for `clear`).
+   - **Message Content Intent**: lets prefix commands read what users type
+   - **Server Members Intent**: lets the bot look up members and check their permissions
+4. Go to **OAuth2 → URL Generator**. Select the scopes `bot` and `applications.commands`, and these bot permissions:
+   - **Send Messages**: to respond to commands
+   - **Read Message History** and **Manage Messages**: used by `clear` to find and delete messages
 5. Open the generated URL in a browser and invite the bot to your server.
+
+When the bot gains features that need more permissions, run `/invite` for an updated link and re-authorize it. No need to remove the bot first.
 
 ## Configuration
 
-All settings live in `.env`:
+All settings live in `.env`. Invalid values stop startup with an error naming the variable.
 
 | Variable | Description | Default           |
 | --- | --- |-------------------|
@@ -58,75 +58,24 @@ All settings live in `.env`:
 | `BOT_ACTIVITY_NAME` | Text shown after the activity type | `with discord.py` |
 | `MAX_CLEAR_AMOUNT` | Most messages `clear` can delete at once | `100`             |
 
-Invalid values for `LOG_LEVEL`, `BOT_STATUS`, `BOT_ACTIVITY_TYPE` or `MAX_CLEAR_AMOUNT` stop startup with an error naming the variable.
-
-The bot owner can also change presence at runtime with `/setpresence`.
-
 ## Commands
 
 | Command | Description | Permission |
 | --- | --- | --- |
 | `/ping`, `do ping` | Latency check | Anyone |
 | `/hello`, `do hello` | Greeting | Anyone |
-| `/clear <n>`, `do clear <n>` | Delete last n messages | Manage Messages |
+| `/clear [n]`, `do clear [n]` | Delete the last n messages (1 to `MAX_CLEAR_AMOUNT`, default 5) | Manage Messages |
 | `/setpresence`, `do setpresence` | Change bot presence | Bot owner |
+| `/invite`, `do invite` | Get the bot's invite link | Bot owner |
 
-## Project Structure
+## Security & Privacy
 
-```
-discord-bot/
-├── bot.py             Entry point
-├── config.py          Settings loaded from .env
-├── logger.py          Logging configuration
-├── requirements.txt
-├── cogs/              Feature modules (auto-loaded)
-│   ├── general.py
-│   ├── moderation.py
-│   └── presence.py
-└── logs/              Generated at runtime
-```
+The bot does not collect, store or send user data anywhere, and has no analytics or telemetry. It reads message content and member info only to run commands.
 
-## Tests
+Logs are written only to `logs/bot.log` on the host machine and are cleared on every startup. They record bot lifecycle events, cog loads, errors with tracebacks, and moderation actions (who ran `clear`, where, and how many messages).
 
-```
-python -m unittest discover -s tests -t .
-```
-
-## Adding Commands
-
-Create a new file in `cogs/` following the pattern in `cogs/general.py`. Any `.py` file in that folder is loaded automatically on startup.
-
-## Data & Privacy
-
-This bot:
-
-- **Does not** collect, store, or transmit user data to any external service
-- **Does not** use analytics or telemetry
-- Writes logs **only** to `logs/bot.log` on the host machine
-- Truncates the log file on every startup (no long-term log accumulation)
-
-Logged events include: bot lifecycle (login, presence changes), cog loads, errors with tracebacks, and moderation actions (who ran `clear`, where, how many messages). Logs stay on the host running the bot and are never sent anywhere.
-
-The bot reads message content (for prefix commands) and member info (for permission checks) per the intents below, but does not store either.
-
-## Why Each Permission and Intent
-
-**Privileged Intents** (enabled in the Developer Portal):
-
-- **Message Content Intent** — required for prefix commands (`!ping`, etc.) to read what users typed
-- **Server Members Intent** — required to look up members and check their permissions
-
-**Bot Permissions** (set when inviting):
-
-- **Send Messages** — to respond to commands
-- **Read Message History** — required by `clear` to find messages to delete
-- **Manage Messages** — required by `clear` to delete them
-- **Use Slash Commands** — for slash command invocations
+To report a vulnerability, see [SECURITY.md](SECURITY.md).
 
 ## License
 
 [MIT](LICENSE)
-
-## Security
-
-See [SECURITY.md](SECURITY.md) for vulnerability disclosure.
