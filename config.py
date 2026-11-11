@@ -43,3 +43,7 @@ BOT_ACTIVITY_TYPE = parse_choice(
 BOT_ACTIVITY_NAME = os.getenv("BOT_ACTIVITY_NAME", "with discord.py")
 
 MAX_CLEAR_AMOUNT = parse_positive_int("MAX_CLEAR_AMOUNT", os.getenv("MAX_CLEAR_AMOUNT", "100"))
+
+BOT_VERSION = os.getenv("BOT_VERSION", "1.0.0")
+BOT_REPO_URL = os.getenv("BOT_REPO_URL", "https://github.com/mowtiie/Harriet")
+BOT_SUPPORT_URL = os.getenv("BOT_SUPPORT_URL", "")

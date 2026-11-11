@@ -9,13 +9,21 @@ from presence_utils import build_presence
 log = logging.getLogger(__name__)
 
 
-class Presence(commands.Cog):
+class Presence(commands.Cog, description="Change what the bot is up to."):
+    icon = "🎭"
+
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     @commands.hybrid_command(
         name="setpresence",
         description="Change the bot's status and activity (owner only)",
+        extras={
+            "examples": [
+                "setpresence online watching the server",
+                "setpresence dnd playing hide and seek",
+            ]
+        },
     )
     @commands.is_owner()
     @app_commands.describe(

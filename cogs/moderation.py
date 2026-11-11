@@ -31,11 +31,17 @@ async def send_confirmation(ctx: commands.Context, text: str) -> None:
     await confirmation.delete(delay=CONFIRMATION_DELETE_DELAY_SECONDS)
 
 
-class Moderation(commands.Cog):
+class Moderation(commands.Cog, description="Keep your channels tidy."):
+    icon = "🛡️"
+
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
-    @commands.hybrid_command(name="clear", description="Delete the last N messages in this channel")
+    @commands.hybrid_command(
+        name="clear",
+        description="Delete the last N messages in this channel",
+        extras={"examples": ["clear", "clear 10"]},
+    )
     @commands.guild_only()
     @commands.has_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True, read_message_history=True)

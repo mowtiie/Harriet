@@ -57,11 +57,16 @@ All settings live in `.env`. Invalid values stop startup with an error naming th
 | `BOT_ACTIVITY_TYPE` | `playing`, `listening`, `watching`, `competing` | `playing`         |
 | `BOT_ACTIVITY_NAME` | Text shown after the activity type | `with discord.py` |
 | `MAX_CLEAR_AMOUNT` | Most messages `clear` can delete at once | `100`             |
+| `BOT_VERSION` | Version shown by `info` | `1.0.0` |
+| `BOT_REPO_URL` | Source link shown by `info` (empty hides it) | `https://github.com/mowtiie/Harriet` |
+| `BOT_SUPPORT_URL` | Support link shown by `info` (empty hides it) | — |
 
 ## Commands
 
 | Command | Description | Permission |
 | --- | --- | --- |
+| `/help [command]`, `do help [command]` | Browse commands by category, or get usage and examples for one | Anyone |
+| `/info`, `do info` | About the bot and how to use it | Anyone |
 | `/ping`, `do ping` | Latency check | Anyone |
 | `/hello`, `do hello` | Greeting | Anyone |
 | `/clear [n]`, `do clear [n]` | Delete the last n messages (1 to `MAX_CLEAR_AMOUNT`, default 5) | Manage Messages |
