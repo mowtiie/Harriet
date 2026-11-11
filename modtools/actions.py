@@ -4,9 +4,9 @@ from collections.abc import Awaitable, Callable
 import discord
 from discord.ext import commands
 
-from guild_settings import MODLOG_CHANNEL_KEY
+from core.guild_settings import MODLOG_CHANNEL_KEY
+from core.time_format import format_elapsed
 from modtools.models import ModAction
-from time_format import format_elapsed
 from views.modlog_view import build_modlog_view
 from views.style import NO_MENTIONS
 

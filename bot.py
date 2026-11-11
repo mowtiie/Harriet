@@ -8,13 +8,13 @@ from discord import app_commands
 from discord.ext import commands
 
 import config
-from error_messages import GENERIC_ERROR_MESSAGE, describe_error
-from guild_settings import GuildSettings
+from core.errors import GENERIC_ERROR_MESSAGE, describe_error
+from core.guild_settings import GuildSettings
+from core.presence import build_presence
 from leveling.store import ExperienceStore
 from logger import setup_logging
 from modtools.warning_store import WarningStore
 from utilities.reminder_store import ReminderStore
-from presence_utils import build_presence
 
 log = logging.getLogger("bot")
 

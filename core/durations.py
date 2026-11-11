@@ -1,7 +1,7 @@
 import re
 from datetime import timedelta
 
-from time_format import SECONDS_PER_DAY, SECONDS_PER_HOUR, SECONDS_PER_MINUTE
+from core.time_format import SECONDS_PER_DAY, SECONDS_PER_HOUR, SECONDS_PER_MINUTE
 
 DAYS_PER_WEEK = 7
 UNIT_SECONDS = {

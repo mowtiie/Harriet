@@ -7,7 +7,7 @@ from unittest import mock
 
 import discord
 
-from guild_settings import MODLOG_CHANNEL_KEY
+from core.guild_settings import MODLOG_CHANNEL_KEY
 from modtools.actions import (
     AUDIT_REASON_LIMIT,
     audit_reason,

@@ -5,7 +5,7 @@ from discord import app_commands
 from discord.ext import commands
 
 import config
-from guild_settings import MODLOG_CHANNEL_KEY, VOLUME_KEY
+from core.guild_settings import MODLOG_CHANNEL_KEY, VOLUME_KEY
 from modtools.errors import ModerationError
 from views.settings_view import build_settings_view
 

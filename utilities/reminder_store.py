@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 
-from database import transaction
+from core.database import transaction
 
 CREATE_TABLE_SQL = """
 CREATE TABLE IF NOT EXISTS reminders (

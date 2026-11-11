@@ -1,7 +1,7 @@
 import asyncio
 from pathlib import Path
 
-from database import transaction
+from core.database import transaction
 
 VOLUME_KEY = "volume"
 MODLOG_CHANNEL_KEY = "modlog_channel_id"

@@ -5,8 +5,8 @@ from discord import app_commands
 from discord.ext import commands
 
 import config
+from core.time_format import SECONDS_PER_HOUR
 from modtools.errors import ModerationError
-from time_format import SECONDS_PER_HOUR
 
 log = logging.getLogger(__name__)
 

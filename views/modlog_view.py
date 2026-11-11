@@ -1,8 +1,8 @@
 import discord
 from discord import ui
 
+from core.time_format import format_elapsed
 from modtools.models import ModAction
-from time_format import format_elapsed
 from views.style import ACCENT_COLOR, divider
 
 

@@ -3,7 +3,7 @@
 import unittest
 from datetime import timedelta
 
-from time_format import format_elapsed
+from core.time_format import format_elapsed
 
 
 class FormatElapsedTests(unittest.TestCase):

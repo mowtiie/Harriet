@@ -4,7 +4,7 @@ import unittest
 
 import discord
 
-from presence_utils import build_presence
+from core.presence import build_presence
 
 
 class BuildPresenceTests(unittest.TestCase):

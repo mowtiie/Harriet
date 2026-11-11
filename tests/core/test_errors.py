@@ -5,7 +5,7 @@ import unittest
 
 from discord.ext import commands
 
-from error_messages import describe_error
+from core.errors import describe_error
 from games.errors import FunError
 from modtools.errors import ModerationError
 from playback.errors import VoiceStateError

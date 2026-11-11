@@ -4,7 +4,7 @@ from datetime import timedelta
 import discord
 from discord import ui
 
-from time_format import format_elapsed
+from core.time_format import format_elapsed
 from views.style import ACCENT_COLOR, divider
 
 

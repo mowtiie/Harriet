@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from guild_settings import GuildSettings
+from core.guild_settings import GuildSettings
 
 
 class GuildSettingsTests(unittest.IsolatedAsyncioTestCase):

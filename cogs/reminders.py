@@ -6,7 +6,7 @@ from discord import app_commands
 from discord.ext import commands, tasks
 
 import config
-from durations import parse_duration
+from core.durations import parse_duration
 from utilities.errors import UtilityError
 from utilities.reminder_store import Reminder
 from views.reminders_view import build_reminders_view, format_delivery

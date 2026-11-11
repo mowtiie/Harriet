@@ -4,7 +4,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from presence_utils import ACTIVITY_MAP, STATUS_MAP
+from core.presence import ACTIVITY_MAP, STATUS_MAP
 
 LOG_LEVELS = ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")
 

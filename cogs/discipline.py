@@ -6,12 +6,11 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from durations import parse_duration
+from core.durations import parse_duration
 from modtools.actions import audit_reason, confirmation_text, enforce
 from modtools.errors import ModerationError
 from modtools.hierarchy import ensure_can_moderate
 from modtools.models import DEFAULT_REASON, ModAction
-
 
 MAX_TIMEOUT = timedelta(days=28)
 

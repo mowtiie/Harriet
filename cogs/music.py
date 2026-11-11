@@ -6,7 +6,7 @@ from discord import app_commands
 from discord.ext import commands
 
 import config
-from guild_settings import VOLUME_KEY
+from core.guild_settings import VOLUME_KEY
 from playback.checks import in_voice_channel, with_active_player
 from playback.errors import QueueFullError, ResolveError
 from playback.player import GuildPlayer, is_ffmpeg_available

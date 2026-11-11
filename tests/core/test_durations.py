@@ -3,7 +3,7 @@
 import unittest
 from datetime import timedelta
 
-from durations import parse_duration
+from core.durations import parse_duration
 
 MAXIMUM = timedelta(days=28)
 

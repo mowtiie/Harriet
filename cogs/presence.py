@@ -4,7 +4,7 @@ from typing import Literal
 from discord import app_commands
 from discord.ext import commands
 
-from presence_utils import build_presence
+from core.presence import build_presence
 
 log = logging.getLogger(__name__)
 
