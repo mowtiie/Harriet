@@ -15,6 +15,7 @@ class FakeVoiceClient:
         self.paused = False
         self.disconnected = False
         self.channel = "voice"
+        self.voice_privacy_code = None
 
     def is_playing(self) -> bool:
         return self.playing

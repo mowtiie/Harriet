@@ -88,6 +88,12 @@ class GuildPlayer:
             self.voice_client.play(
                 discord.PCMVolumeTransformer(source, volume=volume), after=self._on_track_end
             )
+            log.info(
+                "Playing '%s' in %s (voice privacy code: %s)",
+                track.title,
+                self.voice_client.channel,
+                self.voice_client.voice_privacy_code,
+            )
             return
         self._idle_task = self._loop.create_task(self._disconnect_when_idle())
 
