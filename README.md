@@ -8,6 +8,7 @@ Just a simple and helpful Discord bot that productively wants to make you happy.
 - Hybrid commands: every command works as both `do cmd` and `/cmd`
 - Music in voice channels from YouTube, links, or local files
 - Moderation: kick, ban, timeout, warnings, channel lock and slowmode, with an optional mod-log channel
+- Utilities: member, server and role lookups, reminders, dice and random picks
 - Per-server settings stored in SQLite
 - Customizable presence (via `.env` or `/setpresence`)
 - Logging to file and console, cleared on every restart
@@ -71,6 +72,8 @@ All settings live in `.env`. Invalid values stop startup with an error naming th
 | `DEFAULT_VOLUME` | Music volume (0 to 100) for servers that haven't set one | `50` |
 | `MAX_QUEUE_SIZE` | Most tracks a server can queue | `50` |
 | `MUSIC_IDLE_TIMEOUT_SECONDS` | Seconds of silence before the bot leaves voice | `120` |
+| `MAX_REMINDERS_PER_USER` | Most pending reminders one person can have | `10` |
+| `MAX_REMINDER_DAYS` | Furthest ahead a reminder can be set, in days | `365` |
 
 ## Commands
 
@@ -94,9 +97,19 @@ All settings live in `.env`. Invalid values stop startup with an error naming th
 | `/warnings <member>`, `/clearwarnings <member>` | Show or remove a member's warnings | Moderate Members |
 | `/slowmode <seconds>` | Set channel slowmode (0 turns it off) | Manage Channels |
 | `/lock`, `/unlock` | Stop or allow `@everyone` sending in the channel | Manage Channels |
+| `/userinfo [member]`, `/avatar [member]` | Member details, or their avatar at full size | Anyone |
+| `/serverinfo`, `/roleinfo <role>` | Details about the server or a role | Anyone |
+| `/remind <duration> <text>` | Get a reminder after `30m`, `2h`, `1d`, `1h30m`, etc. | Anyone |
+| `/reminders`, `/unremind <id>` | List or cancel your pending reminders | Anyone |
+| `/roll [dice]` | Roll dice like `d20`, `2d6` or `4d8+3` | Anyone |
+| `/choose <a, b, c>` | Pick one option at random | Anyone |
 | `/clear [n]`, `do clear [n]` | Delete the last n messages (1 to `MAX_CLEAR_AMOUNT`, default 5) | Manage Messages |
 | `/setpresence`, `do setpresence` | Change bot presence | Bot owner |
 | `/invite`, `do invite` | Get the bot's invite link | Bot owner |
+
+## Reminders
+
+Reminders are saved in the database, so they survive restarts. They are posted in the channel where you set them, pinging only you, and fall back to a DM if that channel is gone. A reminder that came due while the bot was offline is delivered late with a note.
 
 ## Moderation notes
 
@@ -107,7 +120,7 @@ All settings live in `.env`. Invalid values stop startup with an error naming th
 
 ## Security & Privacy
 
-The bot does not send user data anywhere and has no analytics or telemetry. It reads message content and member info only to run commands. The only data it keeps is per-server settings and warnings (member ID, moderator ID, reason and time), stored locally in the SQLite file at `DATABASE_PATH`. `/clearwarnings` deletes a member's warnings.
+The bot does not send user data anywhere and has no analytics or telemetry. It reads message content and member info only to run commands. The only data it keeps is per-server settings, warnings (member ID, moderator ID, reason and time) and pending reminders (user ID, channel ID, text and due time), stored locally in the SQLite file at `DATABASE_PATH`. `/clearwarnings` deletes a member's warnings, and a reminder is deleted once it is delivered or cancelled.
 
 Logs are written only to `logs/bot.log` on the host machine and are cleared on every startup. They record bot lifecycle events, cog loads, errors with tracebacks, and moderation actions (who did what to whom, where, and why).
 ## License

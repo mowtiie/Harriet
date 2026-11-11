@@ -15,6 +15,7 @@ from views.help_data import (
 )
 from views.help_view import HelpView, build_command_view
 from views.info_view import BotInfo, build_info_view
+from views.style import NO_MENTIONS
 
 log = logging.getLogger(__name__)
 
@@ -90,7 +91,10 @@ class Help(
         if ctx.interaction:
             await ctx.defer()
         application = await self.bot.application_info()
-        await ctx.send(view=build_info_view(self._collect_info(application.owner)))
+        await ctx.send(
+            view=build_info_view(self._collect_info(application.owner)),
+            allowed_mentions=NO_MENTIONS,
+        )
 
     def _collect_info(self, owner: discord.User) -> BotInfo:
         return BotInfo(

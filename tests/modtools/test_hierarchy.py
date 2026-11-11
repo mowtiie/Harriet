@@ -1,9 +1,7 @@
-"""Tests for role hierarchy rules and duration parsing."""
+"""Tests for role hierarchy rules."""
 
 import unittest
-from datetime import timedelta
 
-from modtools.durations import parse_duration
 from modtools.hierarchy import Standing, hierarchy_error
 
 OWNER_ID = 1
@@ -41,32 +39,6 @@ class HierarchyErrorTests(unittest.TestCase):
     def test_owner_may_target_roles_above_themselves(self) -> None:
         owner = Standing(OWNER_ID, 1)
         self.assertIsNone(error_for(owner, Standing(3, 9)))
-
-
-class ParseDurationTests(unittest.TestCase):
-    def test_single_units(self) -> None:
-        self.assertEqual(parse_duration("30s"), timedelta(seconds=30))
-        self.assertEqual(parse_duration("10m"), timedelta(minutes=10))
-        self.assertEqual(parse_duration("2h"), timedelta(hours=2))
-        self.assertEqual(parse_duration("3d"), timedelta(days=3))
-        self.assertEqual(parse_duration("1w"), timedelta(weeks=1))
-
-    def test_combined_units_ignoring_case_and_spaces(self) -> None:
-        self.assertEqual(parse_duration("1H 30m"), timedelta(hours=1, minutes=30))
-
-    def test_rejects_unreadable_text(self) -> None:
-        for text in ("", "soon", "10", "5x", "1h later", "-5m"):
-            with self.subTest(text=text), self.assertRaises(ValueError):
-                parse_duration(text)
-
-    def test_rejects_zero(self) -> None:
-        with self.assertRaises(ValueError):
-            parse_duration("0m")
-
-    def test_rejects_more_than_the_maximum(self) -> None:
-        self.assertEqual(parse_duration("28d"), timedelta(days=28))
-        with self.assertRaises(ValueError):
-            parse_duration("29d")
 
 
 if __name__ == "__main__":

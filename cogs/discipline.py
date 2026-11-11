@@ -1,15 +1,19 @@
 from collections.abc import Awaitable, Callable
+from datetime import timedelta
 from functools import partial
 
 import discord
 from discord import app_commands
 from discord.ext import commands
 
+from durations import parse_duration
 from modtools.actions import audit_reason, confirmation_text, enforce
-from modtools.durations import parse_duration
 from modtools.errors import ModerationError
 from modtools.hierarchy import ensure_can_moderate
 from modtools.models import DEFAULT_REASON, ModAction
+
+
+MAX_TIMEOUT = timedelta(days=28)
 
 
 class Discipline(commands.Cog, description="Kick, ban and time out members."):
@@ -95,7 +99,7 @@ class Discipline(commands.Cog, description="Kick, ban and time out members."):
     ) -> None:
         ensure_can_moderate(ctx, member)
         try:
-            length = parse_duration(duration)
+            length = parse_duration(duration, MAX_TIMEOUT)
         except ValueError as error:
             raise commands.BadArgument(str(error)) from error
         action = ModAction("Timeout", "timed out", ctx.guild, ctx.author, member, reason, length)

@@ -4,7 +4,6 @@ from datetime import timedelta
 from time_format import SECONDS_PER_DAY, SECONDS_PER_HOUR, SECONDS_PER_MINUTE
 
 DAYS_PER_WEEK = 7
-MAX_TIMEOUT_DAYS = 28
 UNIT_SECONDS = {
     "w": DAYS_PER_WEEK * SECONDS_PER_DAY,
     "d": SECONDS_PER_DAY,
@@ -12,13 +11,12 @@ UNIT_SECONDS = {
     "m": SECONDS_PER_MINUTE,
     "s": 1,
 }
-MAX_TIMEOUT = timedelta(days=MAX_TIMEOUT_DAYS)
 DURATION_HINT = "Use a duration like `30m`, `2h`, `3d` or `1h30m`."
 
 _PART = re.compile(r"(\d+)([wdhms])")
 
 
-def parse_duration(text: str, maximum: timedelta = MAX_TIMEOUT) -> timedelta:
+def parse_duration(text: str, maximum: timedelta) -> timedelta:
     cleaned = "".join(text.lower().split())
     parts = _PART.findall(cleaned)
     if not parts or "".join(f"{amount}{unit}" for amount, unit in parts) != cleaned:

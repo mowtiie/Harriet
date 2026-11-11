@@ -69,3 +69,8 @@ MAX_QUEUE_SIZE = parse_positive_int("MAX_QUEUE_SIZE", os.getenv("MAX_QUEUE_SIZE"
 MUSIC_IDLE_TIMEOUT_SECONDS = parse_positive_int(
     "MUSIC_IDLE_TIMEOUT_SECONDS", os.getenv("MUSIC_IDLE_TIMEOUT_SECONDS", "120")
 )
+
+MAX_REMINDERS_PER_USER = parse_positive_int(
+    "MAX_REMINDERS_PER_USER", os.getenv("MAX_REMINDERS_PER_USER", "10")
+)
+MAX_REMINDER_DAYS = parse_positive_int("MAX_REMINDER_DAYS", os.getenv("MAX_REMINDER_DAYS", "365"))
