@@ -4,12 +4,8 @@ from datetime import timedelta
 import discord
 from discord import ui
 
+from time_format import format_elapsed
 from views.style import ACCENT_COLOR, divider
-
-SECONDS_PER_MINUTE = 60
-SECONDS_PER_HOUR = 60 * SECONDS_PER_MINUTE
-SECONDS_PER_DAY = 24 * SECONDS_PER_HOUR
-MAX_UPTIME_PARTS = 3
 
 
 @dataclass(frozen=True)
@@ -29,15 +25,6 @@ class BotInfo:
     support_url: str
 
 
-def format_uptime(uptime: timedelta) -> str:
-    days, remainder = divmod(int(uptime.total_seconds()), SECONDS_PER_DAY)
-    hours, remainder = divmod(remainder, SECONDS_PER_HOUR)
-    minutes, seconds = divmod(remainder, SECONDS_PER_MINUTE)
-    amounts = ((days, "d"), (hours, "h"), (minutes, "m"), (seconds, "s"))
-    parts = [f"{value}{unit}" for value, unit in amounts if value]
-    return " ".join(parts[:MAX_UPTIME_PARTS]) or "0s"
-
-
 def format_getting_started(prefix: str) -> str:
     return "\n".join(
         [
@@ -54,7 +41,7 @@ def format_stats(info: BotInfo) -> str:
         [
             "### Stats",
             f"**Latency** · {info.latency_ms} ms",
-            f"**Uptime** · {format_uptime(info.uptime)}",
+            f"**Uptime** · {format_elapsed(info.uptime)}",
             f"**Servers** · {info.guild_count}",
         ]
     )

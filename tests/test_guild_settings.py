@@ -35,6 +35,11 @@ class GuildSettingsTests(unittest.IsolatedAsyncioTestCase):
         await self.settings.set(1, "volume", "20")
         self.assertEqual(await self.settings.get_int(1, "volume", 50), 20)
 
+    async def test_delete_removes_value(self) -> None:
+        await self.settings.set(1, "volume", "30")
+        await self.settings.delete(1, "volume")
+        self.assertIsNone(await self.settings.get(1, "volume"))
+
     async def test_values_persist_across_instances(self) -> None:
         await self.settings.set(1, "volume", "30")
         self.assertEqual(await GuildSettings(self.path).get(1, "volume"), "30")

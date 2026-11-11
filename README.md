@@ -7,6 +7,7 @@ Just a simple and helpful Discord bot that productively wants to make you happy.
 - Modular cog-based architecture, loaded automatically from `cogs/`
 - Hybrid commands: every command works as both `do cmd` and `/cmd`
 - Music in voice channels from YouTube, links, or local files
+- Moderation: kick, ban, timeout, warnings, channel lock and slowmode, with an optional mod-log channel
 - Per-server settings stored in SQLite
 - Customizable presence (via `.env` or `/setpresence`)
 - Logging to file and console, cleared on every restart
@@ -43,6 +44,8 @@ To run the tests: `python -m unittest discover -s tests -t .`
    - **Send Messages**: to respond to commands
    - **Read Message History** and **Manage Messages**: used by `clear` to find and delete messages
    - **Connect** and **Speak**: used by the music commands
+   - **Kick Members**, **Ban Members**, **Moderate Members**: used by the discipline commands
+   - **Manage Channels** and **Manage Roles**: used by `slowmode`, `lock` and `unlock` (changing a channel's permissions needs Manage Roles)
 5. Open the generated URL in a browser and invite the bot to your server.
 
 When the bot gains features that need more permissions, run `/invite` for an updated link and re-authorize it. No need to remove the bot first.
@@ -82,15 +85,31 @@ All settings live in `.env`. Invalid values stop startup with an error naming th
 | `/join`, `/queue`, `/nowplaying` | Join your channel, show the queue, show the current track | Anyone |
 | `/settings`, `do settings` | Show this server's settings | Anyone |
 | `/setvolume <0-100>`, `do setvolume <0-100>` | Set the music volume for this server | Manage Server |
+| `/setmodlog [channel]`, `do setmodlog [channel]` | Set the channel moderation actions are logged to (empty turns it off) | Manage Server |
+| `/kick <member> [reason]` | Kick a member | Kick Members |
+| `/ban <user> [reason]`, `/unban <user> [reason]` | Ban or unban a user | Ban Members |
+| `/timeout <member> <duration> [reason]` | Time a member out (`30m`, `2h`, `3d`, `1h30m`, up to 28 days) | Moderate Members |
+| `/untimeout <member> [reason]` | End a timeout early | Moderate Members |
+| `/warn <member> <reason>` | Warn a member and record it | Moderate Members |
+| `/warnings <member>`, `/clearwarnings <member>` | Show or remove a member's warnings | Moderate Members |
+| `/slowmode <seconds>` | Set channel slowmode (0 turns it off) | Manage Channels |
+| `/lock`, `/unlock` | Stop or allow `@everyone` sending in the channel | Manage Channels |
 | `/clear [n]`, `do clear [n]` | Delete the last n messages (1 to `MAX_CLEAR_AMOUNT`, default 5) | Manage Messages |
 | `/setpresence`, `do setpresence` | Change bot presence | Bot owner |
 | `/invite`, `do invite` | Get the bot's invite link | Bot owner |
 
+## Moderation notes
+
+- Every action checks the role hierarchy: you can't act on yourself, the server owner, or anyone whose top role is equal to or higher than yours or the bot's.
+- Kick, ban, timeout and warn DM the member first (best effort, since closed DMs are skipped). Reasons also appear in the server's audit log.
+- Warnings are stored in the same SQLite file as settings (`DATABASE_PATH`).
+- `unlock` resets the `@everyone` send permission to its default, which removes any explicit allow you had set on that channel.
+
 ## Security & Privacy
 
-The bot does not collect, store or send user data anywhere, and has no analytics or telemetry. It reads message content and member info only to run commands.
+The bot does not send user data anywhere and has no analytics or telemetry. It reads message content and member info only to run commands. The only data it keeps is per-server settings and warnings (member ID, moderator ID, reason and time), stored locally in the SQLite file at `DATABASE_PATH`. `/clearwarnings` deletes a member's warnings.
 
-Logs are written only to `logs/bot.log` on the host machine and are cleared on every startup. They record bot lifecycle events, cog loads, errors with tracebacks, and moderation actions (who ran `clear`, where, and how many messages).
+Logs are written only to `logs/bot.log` on the host machine and are cleared on every startup. They record bot lifecycle events, cog loads, errors with tracebacks, and moderation actions (who did what to whom, where, and why).
 ## License
 
 Released under the [MIT License](LICENSE). You're free to use, modify and distribute Harriet, including commercially, as long as the copyright notice and license text are kept with any copies. It comes with no warranty.

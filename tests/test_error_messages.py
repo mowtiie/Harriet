@@ -6,6 +6,7 @@ import unittest
 from discord.ext import commands
 
 from error_messages import describe_error
+from modtools.errors import ModerationError
 from playback.errors import VoiceStateError
 
 
@@ -34,6 +35,9 @@ class DescribeErrorTests(unittest.TestCase):
 
     def test_voice_state_error_shows_its_own_message(self) -> None:
         self.assertEqual(describe_error(VoiceStateError("Join a voice channel first.")), "Join a voice channel first.")
+
+    def test_moderation_error_shows_its_own_message(self) -> None:
+        self.assertEqual(describe_error(ModerationError("Nope.")), "Nope.")
 
     def test_unexpected_error_returns_none(self) -> None:
         self.assertIsNone(describe_error(RuntimeError("boom")))

@@ -7,6 +7,11 @@ INVITE_PERMISSIONS = discord.Permissions(
     manage_messages=True,
     connect=True,
     speak=True,
+    kick_members=True,
+    ban_members=True,
+    moderate_members=True,
+    manage_channels=True,
+    manage_roles=True,
 )
 
 

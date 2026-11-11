@@ -3,13 +3,13 @@ from discord import ui
 from views.style import ACCENT_COLOR, divider
 
 
-def build_settings_view(guild_name: str, volume_percent: int) -> ui.LayoutView:
+def build_settings_view(guild_name: str, volume_percent: int, modlog: str) -> ui.LayoutView:
     view = ui.LayoutView(timeout=None)
     view.add_item(
         ui.Container(
             ui.TextDisplay(f"# Settings\n-# {guild_name}"),
             divider(),
-            ui.TextDisplay(f"**Volume** · {volume_percent}%"),
+            ui.TextDisplay(f"**Volume** · {volume_percent}%\n**Mod-log channel** · {modlog}"),
             accent_colour=ACCENT_COLOR,
         )
     )

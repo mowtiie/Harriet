@@ -3,7 +3,7 @@
 import unittest
 from datetime import timedelta
 
-from views.info_view import BotInfo, build_link_buttons, format_uptime
+from views.info_view import BotInfo, build_link_buttons
 
 
 def make_info(repo_url: str = "https://example.com/repo", support_url: str = "") -> BotInfo:
@@ -22,18 +22,6 @@ def make_info(repo_url: str = "https://example.com/repo", support_url: str = "")
         repo_url=repo_url,
         support_url=support_url,
     )
-
-
-class FormatUptimeTests(unittest.TestCase):
-    def test_zero_uptime(self) -> None:
-        self.assertEqual(format_uptime(timedelta()), "0s")
-
-    def test_skips_zero_units(self) -> None:
-        self.assertEqual(format_uptime(timedelta(days=1, seconds=3)), "1d 3s")
-
-    def test_shows_at_most_three_units(self) -> None:
-        uptime = timedelta(days=2, hours=3, minutes=4, seconds=5)
-        self.assertEqual(format_uptime(uptime), "2d 3h 4m")
 
 
 class BuildLinkButtonsTests(unittest.TestCase):
