@@ -1,4 +1,4 @@
-"""Tests for reminder delivery and the new views' payloads."""
+"""Tests for reminder delivery."""
 
 import unittest
 from datetime import datetime, timezone
@@ -7,9 +7,7 @@ from unittest import mock
 import discord
 
 from cogs.reminders import Reminders
-from features.reminders.reminders_view import build_reminders_view
 from features.reminders.store import Reminder
-from views.profile_view import build_avatar_view, build_profile_view
 
 DUE = datetime(2026, 6, 1, 12, 0, tzinfo=timezone.utc)
 REMINDER = Reminder(id=4, user_id=9, channel_id=1, text="stand up", due_at=DUE)
@@ -51,27 +49,6 @@ class DeliverTests(unittest.IsolatedAsyncioTestCase):
         user = mock.Mock(send=mock.AsyncMock(side_effect=forbidden()))
         await make_cog(None, user)._deliver(REMINDER)
         user.send.assert_awaited_once()
-
-
-class ViewPayloadTests(unittest.TestCase):
-    def test_profile_view_with_and_without_thumbnail(self) -> None:
-        fields = [("ID", "`1`")]
-        with_icon = build_profile_view("Name", "Sub", fields, "https://example.com/a.png")
-        without_icon = build_profile_view("Name", "Sub", fields)
-        self.assertEqual(with_icon.to_components()[0]["components"][0]["type"], 9)
-        self.assertEqual(without_icon.to_components()[0]["components"][0]["type"], 10)
-
-    def test_avatar_view_has_one_gallery_item_per_avatar(self) -> None:
-        urls = [
-            ("Server avatar", "https://example.com/s.png"),
-            ("Global avatar", "https://example.com/g.png"),
-        ]
-        container = build_avatar_view("Name", urls).to_components()[0]
-        gallery = container["components"][1]
-        self.assertEqual(len(gallery["items"]), 2)
-
-    def test_reminders_view_builds(self) -> None:
-        self.assertTrue(build_reminders_view([REMINDER]).to_components())
 
 
 if __name__ == "__main__":

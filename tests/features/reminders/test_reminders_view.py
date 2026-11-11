@@ -6,6 +6,7 @@ from datetime import datetime, timedelta, timezone
 from features.reminders.reminders_view import (
     LATE_AFTER,
     MAX_TEXT_SHOWN,
+    build_reminders_view,
     format_delivery,
     format_reminder_line,
     format_reminders,
@@ -51,6 +52,14 @@ class FormatDeliveryTests(unittest.TestCase):
         message = format_delivery(make_reminder(), DUE + LATE_AFTER + timedelta(seconds=1))
         self.assertIn("arrived late", message)
         self.assertTrue(message.startswith("<@9> Reminder: stand up\n-# "))
+
+
+class BuildRemindersViewTests(unittest.TestCase):
+    def test_view_builds_into_a_valid_payload(self) -> None:
+        self.assertTrue(build_reminders_view([make_reminder()]).to_components())
+
+    def test_empty_list_still_builds(self) -> None:
+        self.assertTrue(build_reminders_view([]).to_components())
 
 
 if __name__ == "__main__":
