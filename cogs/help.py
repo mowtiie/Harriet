@@ -6,6 +6,7 @@ from discord import app_commands
 from discord.ext import commands
 
 import config
+from playback.errors import VoiceStateError
 from views.help_data import (
     describe_command,
     find_command,
@@ -27,6 +28,8 @@ async def is_visible_to(command: commands.Command, ctx: commands.Context) -> boo
         return False
     try:
         return await command.can_run(ctx)
+    except VoiceStateError:
+        return True
     except commands.CommandError:
         return False
 

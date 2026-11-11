@@ -5,6 +5,8 @@ INVITE_PERMISSIONS = discord.Permissions(
     send_messages=True,
     read_message_history=True,
     manage_messages=True,
+    connect=True,
+    speak=True,
 )
 
 

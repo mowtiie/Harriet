@@ -1,5 +1,6 @@
 import os
 from collections.abc import Collection
+from pathlib import Path
 
 from dotenv import load_dotenv
 
@@ -17,6 +18,16 @@ def parse_choice(name: str, raw: str, allowed: Collection[str]) -> str:
     if value not in {option.lower() for option in allowed}:
         options = ", ".join(allowed)
         raise ConfigError(f"{name} must be one of: {options} (got {raw!r})")
+    return value
+
+
+def parse_int_range(name: str, raw: str, minimum: int, maximum: int) -> int:
+    try:
+        value = int(raw)
+    except ValueError:
+        raise ConfigError(f"{name} must be an integer (got {raw!r})") from None
+    if not minimum <= value <= maximum:
+        raise ConfigError(f"{name} must be between {minimum} and {maximum} (got {value})")
     return value
 
 
@@ -47,3 +58,14 @@ MAX_CLEAR_AMOUNT = parse_positive_int("MAX_CLEAR_AMOUNT", os.getenv("MAX_CLEAR_A
 BOT_VERSION = os.getenv("BOT_VERSION", "1.0.0")
 BOT_REPO_URL = os.getenv("BOT_REPO_URL", "https://github.com/mowtiie/Harriet")
 BOT_SUPPORT_URL = os.getenv("BOT_SUPPORT_URL", "")
+
+DATABASE_PATH = Path(os.getenv("DATABASE_PATH", "data/harriet.db"))
+MUSIC_DIR = Path(os.getenv("MUSIC_DIR", "music"))
+MAX_VOLUME_PERCENT = 100
+DEFAULT_VOLUME = parse_int_range(
+    "DEFAULT_VOLUME", os.getenv("DEFAULT_VOLUME", "50"), 0, MAX_VOLUME_PERCENT
+)
+MAX_QUEUE_SIZE = parse_positive_int("MAX_QUEUE_SIZE", os.getenv("MAX_QUEUE_SIZE", "50"))
+MUSIC_IDLE_TIMEOUT_SECONDS = parse_positive_int(
+    "MUSIC_IDLE_TIMEOUT_SECONDS", os.getenv("MUSIC_IDLE_TIMEOUT_SECONDS", "120")
+)

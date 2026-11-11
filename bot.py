@@ -9,6 +9,7 @@ from discord.ext import commands
 
 import config
 from error_messages import GENERIC_ERROR_MESSAGE, describe_error
+from guild_settings import GuildSettings
 from logger import setup_logging
 from presence_utils import build_presence
 
@@ -88,6 +89,7 @@ def create_bot() -> commands.Bot:
         status=status,
         activity=activity,
     )
+    bot.guild_settings = GuildSettings(config.DATABASE_PATH)
 
     async def setup_hook() -> None:
         """Runs once per process, unlike on_ready."""

@@ -1,6 +1,8 @@
 from discord import app_commands
 from discord.ext import commands
 
+from playback.errors import VoiceStateError
+
 GENERIC_ERROR_MESSAGE = "Something went wrong. The error has been logged."
 
 
@@ -24,6 +26,8 @@ def describe_error(error: Exception) -> str | None:
         return f"Invalid value for `{error.param.name}`. Choose one of: {options}"
     if isinstance(error, commands.BadArgument):
         return f"Bad argument: {error}"
+    if isinstance(error, VoiceStateError):
+        return str(error)
     if isinstance(error, (commands.CheckFailure, app_commands.CheckFailure)):
         return "You can't use this command here."
     return None
