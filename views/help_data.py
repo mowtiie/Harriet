@@ -4,7 +4,6 @@ from dataclasses import dataclass
 from discord.ext import commands
 
 DEFAULT_CATEGORY_NAME = "Other"
-DEFAULT_CATEGORY_ICON = "📁"
 NO_DESCRIPTION = "No description provided."
 
 
@@ -15,23 +14,17 @@ class CommandHelp:
     signature: str
     examples: tuple[str, ...]
     category_name: str
-    category_icon: str
 
 
 @dataclass(frozen=True)
 class CategoryHelp:
     name: str
-    icon: str
     description: str
     commands: tuple[CommandHelp, ...]
 
 
 def category_name_of(command: commands.Command) -> str:
     return command.cog_name or DEFAULT_CATEGORY_NAME
-
-
-def category_icon_of(command: commands.Command) -> str:
-    return getattr(command.cog, "icon", DEFAULT_CATEGORY_ICON)
 
 
 def describe_command(command: commands.Command) -> CommandHelp:
@@ -41,7 +34,6 @@ def describe_command(command: commands.Command) -> CommandHelp:
         signature=command.signature,
         examples=tuple(command.extras.get("examples", ())),
         category_name=category_name_of(command),
-        category_icon=category_icon_of(command),
     )
 
 
@@ -57,7 +49,6 @@ def _build_category(members: list[commands.Command]) -> CategoryHelp:
     ordered = sorted(members, key=lambda command: command.qualified_name)
     return CategoryHelp(
         name=category_name_of(first),
-        icon=category_icon_of(first),
         description=getattr(first.cog, "description", None) or "",
         commands=tuple(describe_command(command) for command in ordered),
     )

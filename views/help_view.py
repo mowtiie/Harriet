@@ -39,15 +39,15 @@ def format_command_block(
 
 def format_category_summary(category: CategoryHelp, mentions: Mapping[str, str]) -> str:
     names = " · ".join(command_label(command, mentions) for command in category.commands)
-    lines = [f"### {category.icon} {category.name}", category.description, names]
+    lines = [f"### {category.name}", category.description, names]
     return "\n".join(line for line in lines if line)
 
 
 def overview_items(
     categories: Sequence[CategoryHelp], prefix: str, mentions: Mapping[str, str]
 ) -> list[ui.Item]:
-    header = f"# 📖 Help\nRun a command with `{prefix}<command>` or `/<command>`."
-    footer = "-# 💡 Pick a category below, or use `/help <command>` for usage and examples."
+    header = f"# Help\nRun a command with `{prefix}<command>` or `/<command>`."
+    footer = "-# Pick a category below, or use `/help <command>` for usage and examples."
     return [
         ui.TextDisplay(header),
         divider(),
@@ -59,7 +59,7 @@ def overview_items(
 def category_items(
     category: CategoryHelp, prefix: str, mentions: Mapping[str, str]
 ) -> list[ui.Item]:
-    header = f"# {category.icon} {category.name}\n{category.description}".strip()
+    header = f"# {category.name}\n{category.description}".strip()
     return [
         ui.TextDisplay(header),
         divider(),
@@ -73,7 +73,7 @@ def category_items(
 def build_command_view(
     command: CommandHelp, prefix: str, mentions: Mapping[str, str]
 ) -> ui.LayoutView:
-    footer = f"-# {command.category_icon} {command.category_name}"
+    footer = f"-# {command.category_name}"
     view = ui.LayoutView(timeout=None)
     view.add_item(
         ui.Container(
@@ -101,7 +101,7 @@ class HelpView(ui.LayoutView):
         self._prefix = prefix
         self._mentions = mentions
         self._author_id = author_id
-        self._select = ui.Select(placeholder="Browse a category…")
+        self._select = ui.Select(placeholder="Browse a category")
         self._select.callback = self._on_select
         self._show(None)
 
@@ -147,7 +147,6 @@ class HelpView(ui.LayoutView):
             label="Overview",
             value=OVERVIEW_VALUE,
             description="All categories at a glance",
-            emoji="📖",
             default=selected is None,
         )
         categories = [
@@ -155,7 +154,6 @@ class HelpView(ui.LayoutView):
                 label=category.name,
                 value=category.name,
                 description=category.description[:SELECT_DESCRIPTION_LIMIT] or None,
-                emoji=category.icon,
                 default=category is selected,
             )
             for category in self._categories.values()

@@ -32,8 +32,6 @@ async def send_confirmation(ctx: commands.Context, text: str) -> None:
 
 
 class Moderation(commands.Cog, description="Keep your channels tidy."):
-    icon = "🛡️"
-
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 

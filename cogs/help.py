@@ -36,8 +36,6 @@ class Help(
     name="Help & Info",
     description="Learn what the bot can do and how to use it.",
 ):
-    icon = "📖"
-
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
         self._slash_mentions: dict[str, str] | None = None

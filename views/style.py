@@ -1,7 +1,7 @@
 import discord
 from discord import ui
 
-ACCENT_COLOR = discord.Colour.blurple()
+ACCENT_COLOR = discord.Colour(0x808080)
 
 
 def divider() -> ui.Separator:

@@ -10,8 +10,6 @@ log = logging.getLogger(__name__)
 
 
 class Presence(commands.Cog, description="Change what the bot is up to."):
-    icon = "🎭"
-
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 

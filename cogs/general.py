@@ -17,8 +17,6 @@ def build_invite_url(client_id: int) -> str:
 
 
 class General(commands.Cog, description="Everyday commands for everyone."):
-    icon = "🏠"
-
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 

@@ -41,10 +41,10 @@ def format_uptime(uptime: timedelta) -> str:
 def format_getting_started(prefix: str) -> str:
     return "\n".join(
         [
-            "### 🚀 Getting started",
-            f"💬 **Text commands** · `{prefix}<command>`",
-            "⚡ **Slash commands** · `/<command>`",
-            f"📖 **See everything I can do** · `/help` or `{prefix}help`",
+            "### Getting started",
+            f"**Text commands** · `{prefix}<command>`",
+            "**Slash commands** · `/<command>`",
+            f"**See everything I can do** · `/help` or `{prefix}help`",
         ]
     )
 
@@ -52,10 +52,10 @@ def format_getting_started(prefix: str) -> str:
 def format_stats(info: BotInfo) -> str:
     return "\n".join(
         [
-            "### 📊 Stats",
-            f"🏓 **Latency** · {info.latency_ms} ms",
-            f"⏱️ **Uptime** · {format_uptime(info.uptime)}",
-            f"🌐 **Servers** · {info.guild_count}",
+            "### Stats",
+            f"**Latency** · {info.latency_ms} ms",
+            f"**Uptime** · {format_uptime(info.uptime)}",
+            f"**Servers** · {info.guild_count}",
         ]
     )
 
@@ -63,19 +63,19 @@ def format_stats(info: BotInfo) -> str:
 def format_details(info: BotInfo) -> str:
     return "\n".join(
         [
-            "### 🛠️ Details",
-            f"👤 **Owner** · {info.owner_mention}",
-            f"🐍 **Python** · {info.python_version}",
-            f"📦 **discord.py** · {info.discord_version}",
+            "### Details",
+            f"**Owner** · {info.owner_mention}",
+            f"**Python** · {info.python_version}",
+            f"**discord.py** · {info.discord_version}",
         ]
     )
 
 
 def build_link_buttons(info: BotInfo) -> list[ui.Button]:
-    links = (("Source code", "📂", info.repo_url), ("Support", "💬", info.support_url))
+    links = (("Source code", info.repo_url), ("Support", info.support_url))
     return [
-        ui.Button(style=discord.ButtonStyle.link, label=label, emoji=emoji, url=url)
-        for label, emoji, url in links
+        ui.Button(style=discord.ButtonStyle.link, label=label, url=url)
+        for label, url in links
         if url
     ]
 
@@ -83,7 +83,7 @@ def build_link_buttons(info: BotInfo) -> list[ui.Button]:
 def build_info_view(info: BotInfo) -> ui.LayoutView:
     items: list[ui.Item] = [
         ui.Section(
-            f"# 🤖 {info.name}",
+            f"# {info.name}",
             info.tagline,
             f"-# Version {info.version}",
             accessory=ui.Thumbnail(info.avatar_url),

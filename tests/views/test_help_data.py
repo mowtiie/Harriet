@@ -5,7 +5,6 @@ import unittest
 from discord.ext import commands
 
 from views.help_data import (
-    DEFAULT_CATEGORY_ICON,
     DEFAULT_CATEGORY_NAME,
     NO_DESCRIPTION,
     describe_command,
@@ -16,7 +15,7 @@ from views.help_data import (
 
 
 class FakeCog(commands.Cog, description="Fake cog."):
-    icon = "🧪"
+    pass
 
 
 async def _callback(ctx: commands.Context, amount: int = 5) -> None:
@@ -40,14 +39,12 @@ class DescribeCommandTests(unittest.TestCase):
         self.assertEqual(described.signature, "[amount=5]")
         self.assertEqual(described.examples, ("clear 3",))
         self.assertEqual(described.category_name, "FakeCog")
-        self.assertEqual(described.category_icon, "🧪")
 
     def test_falls_back_when_metadata_is_missing(self) -> None:
         described = describe_command(make_command("orphan"))
         self.assertEqual(described.description, NO_DESCRIPTION)
         self.assertEqual(described.examples, ())
         self.assertEqual(described.category_name, DEFAULT_CATEGORY_NAME)
-        self.assertEqual(described.category_icon, DEFAULT_CATEGORY_ICON)
 
 
 class GroupIntoCategoriesTests(unittest.TestCase):

@@ -16,9 +16,8 @@ CLEAR = CommandHelp(
     signature="[amount=5]",
     examples=("clear", "clear 10"),
     category_name="Moderation",
-    category_icon="🛡️",
 )
-PING = CommandHelp("ping", "Pong.", "", (), "General", "🏠")
+PING = CommandHelp("ping", "Pong.", "", (), "General")
 
 
 class CommandLabelTests(unittest.TestCase):
@@ -56,14 +55,14 @@ class FormatCommandBlockTests(unittest.TestCase):
 
 class FormatCategorySummaryTests(unittest.TestCase):
     def test_lists_commands_under_heading(self) -> None:
-        category = CategoryHelp("General", "🏠", "Basics.", (PING, CLEAR))
+        category = CategoryHelp("General", "Basics.", (PING, CLEAR))
         self.assertEqual(
             format_category_summary(category, {}).splitlines(),
-            ["### 🏠 General", "Basics.", "`/ping` · `/clear`"],
+            ["### General", "Basics.", "`/ping` · `/clear`"],
         )
 
     def test_omits_blank_description(self) -> None:
-        category = CategoryHelp("General", "🏠", "", (PING,))
+        category = CategoryHelp("General", "", (PING,))
         self.assertEqual(len(format_category_summary(category, {}).splitlines()), 2)
 
 
