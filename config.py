@@ -78,3 +78,6 @@ MAX_REMINDER_DAYS = parse_positive_int("MAX_REMINDER_DAYS", os.getenv("MAX_REMIN
 GAME_TIMEOUT_SECONDS = parse_positive_int(
     "GAME_TIMEOUT_SECONDS", os.getenv("GAME_TIMEOUT_SECONDS", "60")
 )
+
+XP_PER_WIN = parse_positive_int("XP_PER_WIN", os.getenv("XP_PER_WIN", "50"))
+XP_PER_BOT_WIN = parse_positive_int("XP_PER_BOT_WIN", os.getenv("XP_PER_BOT_WIN", "10"))

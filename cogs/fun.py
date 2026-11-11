@@ -9,6 +9,8 @@ from games.answers import flip_coin, pick_answer
 from games.errors import FunError
 from games.rps import RpsGame
 from games.tictactoe import TicTacToeGame
+from leveling.awards import amount_for_win, reward_win
+from views.restricted_view import WinHandler
 from views.rps_view import RpsView
 from views.style import NO_MENTIONS
 from views.tictactoe_view import TicTacToeView
@@ -68,6 +70,7 @@ class Fun(commands.Cog, description="Games and silly answers."):
             bot_id=None if member else self.bot.user.id,
             rng=self._rng,
             timeout_seconds=config.GAME_TIMEOUT_SECONDS,
+            on_finish=self._win_handler(ctx, vs_bot=member is None),
         )
         view.message = await ctx.send(view=view)
 
@@ -82,9 +85,22 @@ class Fun(commands.Cog, description="Games and silly answers."):
         ensure_valid_opponent(ctx.author, member)
         names = {ctx.author.id: ctx.author.display_name, member.id: member.display_name}
         view = TicTacToeView(
-            TicTacToeGame(ctx.author.id, member.id), names, config.GAME_TIMEOUT_SECONDS
+            TicTacToeGame(ctx.author.id, member.id),
+            names,
+            config.GAME_TIMEOUT_SECONDS,
+            self._win_handler(ctx, vs_bot=False),
         )
         view.message = await ctx.send(view=view)
+
+    def _win_handler(self, ctx: commands.Context, vs_bot: bool) -> WinHandler:
+        async def reward_winner(winner_id: int | None) -> str | None:
+            if winner_id is None or winner_id == self.bot.user.id:
+                return None
+            winner = ctx.guild.get_member(winner_id)
+            amount = amount_for_win(opponent_is_bot=vs_bot)
+            return await reward_win(self.bot.experience_store, ctx.channel, winner, amount)
+
+        return reward_winner
 
 
 async def setup(bot: commands.Bot) -> None:

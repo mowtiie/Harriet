@@ -7,7 +7,7 @@ from discord import ui
 
 from games.errors import GameError
 from games.rps import Move, RpsGame, random_move
-from views.game_view import GameView
+from views.restricted_view import GameView, WinHandler
 from views.style import ACCENT_COLOR, divider
 
 BOT_WAITING_HINT = "Pick a move below."
@@ -35,8 +35,9 @@ class RpsView(GameView):
         bot_id: int | None,
         rng: random.Random,
         timeout_seconds: float,
+        on_finish: WinHandler | None = None,
     ) -> None:
-        super().__init__(human_ids, timeout_seconds)
+        super().__init__(human_ids, timeout_seconds, on_finish)
         self._game = game
         self._names = names
         self._bot_id = bot_id
@@ -46,7 +47,12 @@ class RpsView(GameView):
     def _render(self) -> None:
         first, second = self._game.player_ids
         header = f"# Rock paper scissors\n-# {self._names[first]} vs {self._names[second]}"
-        items: list[ui.Item] = [ui.TextDisplay(header), divider(), ui.TextDisplay(self._status())]
+        items: list[ui.Item] = [
+            ui.TextDisplay(header),
+            divider(),
+            ui.TextDisplay(self._status()),
+            *self._note_items(),
+        ]
         if not (self._game.is_finished or self._timed_out):
             items += [divider(), ui.ActionRow(*self._build_buttons())]
         self.clear_items()
@@ -82,6 +88,7 @@ class RpsView(GameView):
             await interaction.response.send_message(text, ephemeral=True)
             return
 
+        await self._record_result(self._game.winner_id)
         self._render()
         self.stop()
         await interaction.response.edit_message(view=self)

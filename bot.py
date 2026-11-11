@@ -10,6 +10,7 @@ from discord.ext import commands
 import config
 from error_messages import GENERIC_ERROR_MESSAGE, describe_error
 from guild_settings import GuildSettings
+from leveling.store import ExperienceStore
 from logger import setup_logging
 from modtools.warning_store import WarningStore
 from utilities.reminder_store import ReminderStore
@@ -94,6 +95,7 @@ def create_bot() -> commands.Bot:
     bot.guild_settings = GuildSettings(config.DATABASE_PATH)
     bot.warning_store = WarningStore(config.DATABASE_PATH)
     bot.reminder_store = ReminderStore(config.DATABASE_PATH)
+    bot.experience_store = ExperienceStore(config.DATABASE_PATH)
 
     async def setup_hook() -> None:
         """Runs once per process, unlike on_ready."""

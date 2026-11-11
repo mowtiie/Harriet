@@ -9,6 +9,7 @@ Just a simple and helpful Discord bot that productively wants to make you happy.
 - Music in voice channels from YouTube, links, or local files
 - Moderation: kick, ban, timeout, warnings, channel lock and slowmode, with an optional mod-log channel
 - Fun: 8-ball, coin flip, and button-based rock paper scissors and tic-tac-toe
+- XP and levels earned by winning games, with a server leaderboard
 - Utilities: member, server and role lookups, reminders, dice and random picks
 - Per-server settings stored in SQLite
 - Customizable presence (via `.env` or `/setpresence`)
@@ -76,6 +77,8 @@ All settings live in `.env`. Invalid values stop startup with an error naming th
 | `MAX_REMINDERS_PER_USER` | Most pending reminders one person can have | `10` |
 | `MAX_REMINDER_DAYS` | Furthest ahead a reminder can be set, in days | `365` |
 | `GAME_TIMEOUT_SECONDS` | Inactivity before a game of `rps` or `tictactoe` expires | `60` |
+| `XP_PER_WIN` | XP for winning a game against another member | `50` |
+| `XP_PER_BOT_WIN` | XP for beating the bot at `rps` | `10` |
 
 ## Commands
 
@@ -109,6 +112,9 @@ All settings live in `.env`. Invalid values stop startup with an error naming th
 | `/coinflip` | Flip a coin | Anyone |
 | `/rps [member]` | Rock paper scissors against the bot, or a member (picks stay hidden until both choose) | Anyone |
 | `/tictactoe <member>` | Challenge a member to tic-tac-toe | Anyone |
+| `/rank [member]` | Show a member's level, XP and server rank | Anyone |
+| `/leaderboard` | Show the server's XP leaderboard | Anyone |
+| `/setxp <member> <amount>`, `/resetxp <member>` | Set or clear a member's XP | Manage Server |
 | `/clear [n]`, `do clear [n]` | Delete the last n messages (1 to `MAX_CLEAR_AMOUNT`, default 5) | Manage Messages |
 | `/setpresence`, `do setpresence` | Change bot presence | Bot owner |
 | `/invite`, `do invite` | Get the bot's invite link | Bot owner |
@@ -116,6 +122,12 @@ All settings live in `.env`. Invalid values stop startup with an error naming th
 ## Games
 
 `rps` and `tictactoe` are played with buttons and only the players can press them. Games live in memory and end after `GAME_TIMEOUT_SECONDS` of inactivity, so a restart ends any game in progress. Nothing about a game is stored.
+
+## XP and levels
+
+XP comes only from winning games: `XP_PER_WIN` for beating another member at `rps` or `tictactoe`, and the smaller `XP_PER_BOT_WIN` for beating the bot at `rps`. Losses, ties and expired games earn nothing, and chatting or voice time earns nothing either. Reaching a new level posts a short announcement (without pinging anyone) in the channel where the game was played.
+
+Level `n` needs `100 + 50 * n` XP to complete, so level 1 is 100 XP and level 10 is 3,250 XP in total. Only the total is stored, so the curve can change without migrating data. Members who leave are hidden from the leaderboard but keep their XP if they return.
 
 ## Reminders
 
@@ -130,7 +142,7 @@ Reminders are saved in the database, so they survive restarts. They are posted i
 
 ## Security & Privacy
 
-The bot does not send user data anywhere and has no analytics or telemetry. It reads message content and member info only to run commands. The only data it keeps is per-server settings, warnings (member ID, moderator ID, reason and time) and pending reminders (user ID, channel ID, text and due time), stored locally in the SQLite file at `DATABASE_PATH`. `/clearwarnings` deletes a member's warnings, and a reminder is deleted once it is delivered or cancelled.
+The bot does not send user data anywhere and has no analytics or telemetry. It reads message content and member info only to run commands. The only data it keeps is per-server settings, warnings (member ID, moderator ID, reason and time) and pending reminders (user ID, channel ID, text and due time) and XP totals (member ID and XP), stored locally in the SQLite file at `DATABASE_PATH`. `/clearwarnings` deletes a member's warnings, a reminder is deleted once it is delivered or cancelled, and `/resetxp` clears a member's XP.
 
 Logs are written only to `logs/bot.log` on the host machine and are cleared on every startup. They record bot lifecycle events, cog loads, errors with tracebacks, and moderation actions (who did what to whom, where, and why).
 ## License

@@ -6,7 +6,7 @@ from discord import ui
 
 from games.errors import GameError
 from games.tictactoe import FIRST_MARK, SECOND_MARK, SIZE, TicTacToeGame
-from views.game_view import GameView
+from views.restricted_view import GameView, WinHandler
 from views.style import ACCENT_COLOR, divider
 
 EMPTY_SQUARE = "-"
@@ -26,9 +26,13 @@ def status_text(game: TicTacToeGame, names: Mapping[int, str], timed_out: bool) 
 
 class TicTacToeView(GameView):
     def __init__(
-        self, game: TicTacToeGame, names: Mapping[int, str], timeout_seconds: float
+        self,
+        game: TicTacToeGame,
+        names: Mapping[int, str],
+        timeout_seconds: float,
+        on_finish: WinHandler | None = None,
     ) -> None:
-        super().__init__(game.player_ids, timeout_seconds)
+        super().__init__(game.player_ids, timeout_seconds, on_finish)
         self._game = game
         self._names = names
         self._render()
@@ -46,6 +50,7 @@ class TicTacToeView(GameView):
                 ui.TextDisplay(header),
                 divider(),
                 ui.TextDisplay(status),
+                *self._note_items(),
                 divider(),
                 *self._build_rows(),
                 accent_colour=ACCENT_COLOR,
@@ -75,7 +80,8 @@ class TicTacToeView(GameView):
         except GameError as error:
             await interaction.response.send_message(str(error), ephemeral=True)
             return
-        self._render()
         if self._game.is_over:
+            await self._record_result(self._game.winner_id)
             self.stop()
+        self._render()
         await interaction.response.edit_message(view=self)

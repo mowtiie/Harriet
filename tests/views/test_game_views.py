@@ -59,6 +59,67 @@ class RpsViewAgainstBotTests(unittest.IsolatedAsyncioTestCase):
         )
 
 
+class RecordingHandler:
+    def __init__(self, note: str | None = "+50 XP") -> None:
+        self.winners: list[int | None] = []
+        self._note = note
+
+    async def __call__(self, winner_id: int | None) -> str | None:
+        self.winners.append(winner_id)
+        return self._note
+
+
+def notes_in(view: object) -> list[str]:
+    return [item.content for item in view.walk_children() if hasattr(item, "content")]
+
+
+class WinHandlerTests(unittest.IsolatedAsyncioTestCase):
+    async def test_rps_reports_the_winner_and_shows_the_note(self) -> None:
+        handler = RecordingHandler()
+        view = make_rps_view(BOT, vs_bot=True, bot_move=Move.SCISSORS)
+        view._on_finish = handler
+        await view._on_pick(Move.ROCK, make_interaction(ALICE))
+        self.assertEqual(handler.winners, [ALICE])
+        self.assertIn("-# +50 XP", notes_in(view))
+
+    async def test_rps_reports_the_bot_as_winner_too(self) -> None:
+        handler = RecordingHandler(note=None)
+        view = make_rps_view(BOT, vs_bot=True, bot_move=Move.PAPER)
+        view._on_finish = handler
+        await view._on_pick(Move.ROCK, make_interaction(ALICE))
+        self.assertEqual(handler.winners, [BOT])
+        self.assertFalse([text for text in notes_in(view) if text.startswith("-#")])
+
+    async def test_rps_tie_reports_no_winner(self) -> None:
+        handler = RecordingHandler(note=None)
+        view = make_rps_view(BOT, vs_bot=True, bot_move=Move.ROCK)
+        view._on_finish = handler
+        await view._on_pick(Move.ROCK, make_interaction(ALICE))
+        self.assertEqual(handler.winners, [None])
+
+    async def test_unfinished_rps_does_not_report(self) -> None:
+        handler = RecordingHandler()
+        view = make_rps_view(BOB, vs_bot=False)
+        view._on_finish = handler
+        await view._on_pick(Move.ROCK, make_interaction(ALICE))
+        self.assertEqual(handler.winners, [])
+
+    async def test_tictactoe_reports_only_when_the_game_ends(self) -> None:
+        handler = RecordingHandler()
+        view = TicTacToeView(TicTacToeGame(ALICE, BOB), NAMES, 60, handler)
+        for user, square in ((ALICE, 0), (BOB, 3), (ALICE, 1), (BOB, 4)):
+            await view._on_press(square, make_interaction(user))
+        self.assertEqual(handler.winners, [])
+        await view._on_press(2, make_interaction(ALICE))
+        self.assertEqual(handler.winners, [ALICE])
+        self.assertIn("-# +50 XP", notes_in(view))
+
+    async def test_a_game_without_a_handler_still_works(self) -> None:
+        view = make_rps_view(BOT, vs_bot=True)
+        await view._on_pick(Move.ROCK, make_interaction(ALICE))
+        self.assertTrue(view.is_finished())
+
+
 class RpsViewAgainstMemberTests(unittest.IsolatedAsyncioTestCase):
     async def test_first_pick_is_private_and_second_reveals_the_result(self) -> None:
         view = make_rps_view(BOB, vs_bot=False)
