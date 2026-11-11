@@ -6,6 +6,7 @@ import unittest
 from discord.ext import commands
 
 from error_messages import describe_error
+from games.errors import FunError
 from modtools.errors import ModerationError
 from playback.errors import VoiceStateError
 from utilities.errors import UtilityError
@@ -42,6 +43,9 @@ class DescribeErrorTests(unittest.TestCase):
 
     def test_utility_error_shows_its_own_message(self) -> None:
         self.assertEqual(describe_error(UtilityError("Too many.")), "Too many.")
+
+    def test_fun_error_shows_its_own_message(self) -> None:
+        self.assertEqual(describe_error(FunError("Pick a person.")), "Pick a person.")
 
     def test_unexpected_error_returns_none(self) -> None:
         self.assertIsNone(describe_error(RuntimeError("boom")))

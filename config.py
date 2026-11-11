@@ -74,3 +74,7 @@ MAX_REMINDERS_PER_USER = parse_positive_int(
     "MAX_REMINDERS_PER_USER", os.getenv("MAX_REMINDERS_PER_USER", "10")
 )
 MAX_REMINDER_DAYS = parse_positive_int("MAX_REMINDER_DAYS", os.getenv("MAX_REMINDER_DAYS", "365"))
+
+GAME_TIMEOUT_SECONDS = parse_positive_int(
+    "GAME_TIMEOUT_SECONDS", os.getenv("GAME_TIMEOUT_SECONDS", "60")
+)

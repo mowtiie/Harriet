@@ -8,6 +8,7 @@ Just a simple and helpful Discord bot that productively wants to make you happy.
 - Hybrid commands: every command works as both `do cmd` and `/cmd`
 - Music in voice channels from YouTube, links, or local files
 - Moderation: kick, ban, timeout, warnings, channel lock and slowmode, with an optional mod-log channel
+- Fun: 8-ball, coin flip, and button-based rock paper scissors and tic-tac-toe
 - Utilities: member, server and role lookups, reminders, dice and random picks
 - Per-server settings stored in SQLite
 - Customizable presence (via `.env` or `/setpresence`)
@@ -74,6 +75,7 @@ All settings live in `.env`. Invalid values stop startup with an error naming th
 | `MUSIC_IDLE_TIMEOUT_SECONDS` | Seconds of silence before the bot leaves voice | `120` |
 | `MAX_REMINDERS_PER_USER` | Most pending reminders one person can have | `10` |
 | `MAX_REMINDER_DAYS` | Furthest ahead a reminder can be set, in days | `365` |
+| `GAME_TIMEOUT_SECONDS` | Inactivity before a game of `rps` or `tictactoe` expires | `60` |
 
 ## Commands
 
@@ -103,9 +105,17 @@ All settings live in `.env`. Invalid values stop startup with an error naming th
 | `/reminders`, `/unremind <id>` | List or cancel your pending reminders | Anyone |
 | `/roll [dice]` | Roll dice like `d20`, `2d6` or `4d8+3` | Anyone |
 | `/choose <a, b, c>` | Pick one option at random | Anyone |
+| `/8ball <question>` | Ask the magic 8-ball | Anyone |
+| `/coinflip` | Flip a coin | Anyone |
+| `/rps [member]` | Rock paper scissors against the bot, or a member (picks stay hidden until both choose) | Anyone |
+| `/tictactoe <member>` | Challenge a member to tic-tac-toe | Anyone |
 | `/clear [n]`, `do clear [n]` | Delete the last n messages (1 to `MAX_CLEAR_AMOUNT`, default 5) | Manage Messages |
 | `/setpresence`, `do setpresence` | Change bot presence | Bot owner |
 | `/invite`, `do invite` | Get the bot's invite link | Bot owner |
+
+## Games
+
+`rps` and `tictactoe` are played with buttons and only the players can press them. Games live in memory and end after `GAME_TIMEOUT_SECONDS` of inactivity, so a restart ends any game in progress. Nothing about a game is stored.
 
 ## Reminders
 
