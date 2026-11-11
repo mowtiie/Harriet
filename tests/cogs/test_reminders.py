@@ -7,9 +7,9 @@ from unittest import mock
 import discord
 
 from cogs.reminders import Reminders
-from utilities.reminder_store import Reminder
+from features.reminders.reminders_view import build_reminders_view
+from features.reminders.store import Reminder
 from views.profile_view import build_avatar_view, build_profile_view
-from views.reminders_view import build_reminders_view
 
 DUE = datetime(2026, 6, 1, 12, 0, tzinfo=timezone.utc)
 REMINDER = Reminder(id=4, user_id=9, channel_id=1, text="stand up", due_at=DUE)

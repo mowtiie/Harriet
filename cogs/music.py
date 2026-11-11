@@ -7,12 +7,12 @@ from discord.ext import commands
 
 import config
 from core.guild_settings import VOLUME_KEY
-from playback.checks import in_voice_channel, with_active_player
-from playback.errors import QueueFullError, ResolveError
-from playback.player import GuildPlayer, is_ffmpeg_available
-from playback.queue import MusicQueue
-from playback.resolver import matching_local_names, resolve_track
-from views.music_view import build_added_view, build_now_playing_view, build_queue_view
+from features.playback.checks import in_voice_channel, with_active_player
+from features.playback.errors import QueueFullError, ResolveError
+from features.playback.music_view import build_added_view, build_now_playing_view, build_queue_view
+from features.playback.player import GuildPlayer, is_ffmpeg_available
+from features.playback.queue import MusicQueue
+from features.playback.resolver import matching_local_names, resolve_track
 
 log = logging.getLogger(__name__)
 

@@ -3,8 +3,8 @@ import random
 from discord import app_commands
 from discord.ext import commands
 
-from utilities.choices import split_choices
-from utilities.dice import format_roll, parse_dice, roll_dice
+from features.tools.choices import split_choices
+from features.tools.dice import format_roll, parse_dice, roll_dice
 from views.style import NO_MENTIONS
 
 

@@ -6,14 +6,14 @@ from discord.ext import commands
 
 import config
 from core.errors import UserError
-from games.answers import flip_coin, pick_answer
-from games.rps import RpsGame
-from games.tictactoe import TicTacToeGame
-from leveling.awards import amount_for_win, reward_win
-from views.restricted_view import WinHandler
-from views.rps_view import RpsView
+from features.games.answers import flip_coin, pick_answer
+from features.games.game_view import WinHandler
+from features.games.rps import RpsGame
+from features.games.rps_view import RpsView
+from features.games.tictactoe import TicTacToeGame
+from features.games.tictactoe_view import TicTacToeView
+from features.leveling.awards import amount_for_win, reward_win
 from views.style import NO_MENTIONS
-from views.tictactoe_view import TicTacToeView
 
 MAX_QUESTION_LENGTH = 200
 

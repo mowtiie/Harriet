@@ -5,9 +5,9 @@ from discord import app_commands
 from discord.ext import commands
 
 import config
-from leveling.ranking import RankedMember, find_member, rank_members
+from features.leveling.rank_view import LeaderboardView, rank_fields
+from features.leveling.ranking import RankedMember, find_member, rank_members
 from views.profile_view import build_profile_view
-from views.rank_view import LeaderboardView, rank_fields
 from views.style import NO_MENTIONS
 
 log = logging.getLogger(__name__)

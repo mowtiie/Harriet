@@ -4,10 +4,10 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from modtools.actions import confirmation_text, enforce
-from modtools.hierarchy import ensure_can_moderate
-from modtools.models import ModAction
-from views.warnings_view import build_warnings_view
+from features.modtools.actions import confirmation_text, enforce
+from features.modtools.hierarchy import ensure_can_moderate
+from features.modtools.models import ModAction
+from features.modtools.warnings_view import build_warnings_view
 
 log = logging.getLogger(__name__)
 

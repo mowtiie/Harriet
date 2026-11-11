@@ -11,10 +11,10 @@ import config
 from core.errors import GENERIC_ERROR_MESSAGE, describe_error
 from core.guild_settings import GuildSettings
 from core.presence import build_presence
-from leveling.store import ExperienceStore
+from features.leveling.store import ExperienceStore
+from features.modtools.warning_store import WarningStore
+from features.reminders.store import ReminderStore
 from logger import setup_logging
-from modtools.warning_store import WarningStore
-from utilities.reminder_store import ReminderStore
 
 log = logging.getLogger("bot")
 

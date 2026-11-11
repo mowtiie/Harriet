@@ -2,7 +2,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from utilities.profile import avatar_urls, role_fields, server_fields, user_fields
+from features.lookup.fields import avatar_urls, role_fields, server_fields, user_fields
 from views.profile_view import build_avatar_view, build_profile_view
 from views.style import NO_MENTIONS
 

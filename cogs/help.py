@@ -7,14 +7,14 @@ from discord.ext import commands
 
 import config
 from core.errors import UserError
-from views.help_data import (
+from features.helpinfo.help_data import (
     describe_command,
     find_command,
     group_into_categories,
     matching_command_names,
 )
-from views.help_view import HelpView, build_command_view
-from views.info_view import BotInfo, build_info_view
+from features.helpinfo.help_view import HelpView, build_command_view
+from features.helpinfo.info_view import BotInfo, build_info_view
 from views.style import NO_MENTIONS
 
 log = logging.getLogger(__name__)

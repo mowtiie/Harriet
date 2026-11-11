@@ -8,8 +8,8 @@ from discord.ext import commands, tasks
 import config
 from core.durations import parse_duration
 from core.errors import UserError
-from utilities.reminder_store import Reminder
-from views.reminders_view import build_reminders_view, format_delivery
+from features.reminders.reminders_view import build_reminders_view, format_delivery
+from features.reminders.store import Reminder
 
 log = logging.getLogger(__name__)
 

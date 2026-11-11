@@ -7,7 +7,7 @@ from discord.ext import commands
 import config
 from core.errors import UserError
 from core.guild_settings import MODLOG_CHANNEL_KEY, VOLUME_KEY
-from views.settings_view import build_settings_view
+from features.settings.settings_view import build_settings_view
 
 log = logging.getLogger(__name__)
 

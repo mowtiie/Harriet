@@ -8,9 +8,9 @@ from discord.ext import commands
 
 from core.durations import parse_duration
 from core.errors import UserError
-from modtools.actions import audit_reason, confirmation_text, enforce
-from modtools.hierarchy import ensure_can_moderate
-from modtools.models import DEFAULT_REASON, ModAction
+from features.modtools.actions import audit_reason, confirmation_text, enforce
+from features.modtools.hierarchy import ensure_can_moderate
+from features.modtools.models import DEFAULT_REASON, ModAction
 
 MAX_TIMEOUT = timedelta(days=28)
 
