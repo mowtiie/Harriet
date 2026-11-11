@@ -1,6 +1,6 @@
 from discord.ext import commands
 
-from playback.errors import VoiceStateError
+from core.errors import UserError
 
 JOIN_FIRST_MESSAGE = "Join a voice channel first."
 SAME_CHANNEL_MESSAGE = "You need to be in the same voice channel as me."
@@ -28,7 +28,7 @@ def _check_voice(ctx: commands.Context, require_bot: bool) -> bool:
         require_bot,
     )
     if message:
-        raise VoiceStateError(message)
+        raise UserError(message)
     return True
 
 

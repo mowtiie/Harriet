@@ -5,8 +5,8 @@ from discord import app_commands
 from discord.ext import commands
 
 import config
+from core.errors import UserError
 from core.time_format import SECONDS_PER_HOUR
-from modtools.errors import ModerationError
 
 log = logging.getLogger(__name__)
 
@@ -33,7 +33,7 @@ def audit_reason(ctx: commands.Context, action: str) -> str:
 
 def text_channel_of(ctx: commands.Context) -> discord.TextChannel:
     if not isinstance(ctx.channel, discord.TextChannel):
-        raise ModerationError("This only works in text channels.")
+        raise UserError("This only works in text channels.")
     return ctx.channel
 
 

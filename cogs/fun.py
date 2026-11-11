@@ -5,8 +5,8 @@ from discord import app_commands
 from discord.ext import commands
 
 import config
+from core.errors import UserError
 from games.answers import flip_coin, pick_answer
-from games.errors import FunError
 from games.rps import RpsGame
 from games.tictactoe import TicTacToeGame
 from leveling.awards import amount_for_win, reward_win
@@ -20,9 +20,9 @@ MAX_QUESTION_LENGTH = 200
 
 def ensure_valid_opponent(author: discord.abc.User, opponent: discord.Member) -> None:
     if opponent.bot:
-        raise FunError("Bots can't play. Pick a person.")
+        raise UserError("Bots can't play. Pick a person.")
     if opponent.id == author.id:
-        raise FunError("You can't play against yourself.")
+        raise UserError("You can't play against yourself.")
 
 
 class Fun(commands.Cog, description="Games and silly answers."):
@@ -39,7 +39,7 @@ class Fun(commands.Cog, description="Games and silly answers."):
     async def eightball(self, ctx: commands.Context, *, question: str) -> None:
         question = " ".join(question.split())
         if len(question) > MAX_QUESTION_LENGTH:
-            raise FunError(f"Keep the question under {MAX_QUESTION_LENGTH} characters.")
+            raise UserError(f"Keep the question under {MAX_QUESTION_LENGTH} characters.")
         answer = pick_answer(self._rng)
         await ctx.send(f"> {question}\n**{answer}**", allowed_mentions=NO_MENTIONS)
 

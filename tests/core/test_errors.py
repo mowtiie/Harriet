@@ -5,11 +5,7 @@ import unittest
 
 from discord.ext import commands
 
-from core.errors import describe_error
-from games.errors import FunError
-from modtools.errors import ModerationError
-from playback.errors import VoiceStateError
-from utilities.errors import UtilityError
+from core.errors import UserError, describe_error
 
 
 class DescribeErrorTests(unittest.TestCase):
@@ -35,17 +31,11 @@ class DescribeErrorTests(unittest.TestCase):
         self.assertIn("online", message)
         self.assertIn("idle", message)
 
-    def test_voice_state_error_shows_its_own_message(self) -> None:
-        self.assertEqual(describe_error(VoiceStateError("Join a voice channel first.")), "Join a voice channel first.")
+    def test_user_error_shows_its_own_message(self) -> None:
+        self.assertEqual(describe_error(UserError("Join a voice channel first.")), "Join a voice channel first.")
 
-    def test_moderation_error_shows_its_own_message(self) -> None:
-        self.assertEqual(describe_error(ModerationError("Nope.")), "Nope.")
-
-    def test_utility_error_shows_its_own_message(self) -> None:
-        self.assertEqual(describe_error(UtilityError("Too many.")), "Too many.")
-
-    def test_fun_error_shows_its_own_message(self) -> None:
-        self.assertEqual(describe_error(FunError("Pick a person.")), "Pick a person.")
+    def test_user_error_is_not_treated_as_a_generic_check_failure(self) -> None:
+        self.assertNotEqual(describe_error(UserError("Nope.")), describe_error(commands.CheckFailure()))
 
     def test_unexpected_error_returns_none(self) -> None:
         self.assertIsNone(describe_error(RuntimeError("boom")))

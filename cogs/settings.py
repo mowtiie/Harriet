@@ -5,8 +5,8 @@ from discord import app_commands
 from discord.ext import commands
 
 import config
+from core.errors import UserError
 from core.guild_settings import MODLOG_CHANNEL_KEY, VOLUME_KEY
-from modtools.errors import ModerationError
 from views.settings_view import build_settings_view
 
 log = logging.getLogger(__name__)
@@ -63,7 +63,7 @@ class Settings(commands.Cog, description="View and change this server's settings
             text = "Mod-log turned off."
         else:
             if not channel.permissions_for(ctx.guild.me).send_messages:
-                raise ModerationError(f"I can't send messages in {channel.mention}.")
+                raise UserError(f"I can't send messages in {channel.mention}.")
             await self.bot.guild_settings.set(ctx.guild.id, MODLOG_CHANNEL_KEY, str(channel.id))
             text = f"Moderation actions will be logged in {channel.mention}."
         log.info("%s (id=%s) changed the mod-log channel in guild=%s", ctx.author, ctx.author.id, ctx.guild)

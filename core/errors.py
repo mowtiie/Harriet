@@ -1,12 +1,11 @@
 from discord import app_commands
 from discord.ext import commands
 
-from games.errors import FunError
-from modtools.errors import ModerationError
-from playback.errors import VoiceStateError
-from utilities.errors import UtilityError
-
 GENERIC_ERROR_MESSAGE = "Something went wrong. The error has been logged."
+
+
+class UserError(commands.CommandError):
+    """A refusal whose message is safe to show to the user as-is."""
 
 
 def describe_error(error: Exception) -> str | None:
@@ -29,7 +28,7 @@ def describe_error(error: Exception) -> str | None:
         return f"Invalid value for `{error.param.name}`. Choose one of: {options}"
     if isinstance(error, commands.BadArgument):
         return f"Bad argument: {error}"
-    if isinstance(error, (VoiceStateError, ModerationError, UtilityError, FunError)):
+    if isinstance(error, UserError):
         return str(error)
     if isinstance(error, (commands.CheckFailure, app_commands.CheckFailure)):
         return "You can't use this command here."

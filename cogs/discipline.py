@@ -7,8 +7,8 @@ from discord import app_commands
 from discord.ext import commands
 
 from core.durations import parse_duration
+from core.errors import UserError
 from modtools.actions import audit_reason, confirmation_text, enforce
-from modtools.errors import ModerationError
 from modtools.hierarchy import ensure_can_moderate
 from modtools.models import DEFAULT_REASON, ModAction
 
@@ -71,7 +71,7 @@ class Discipline(commands.Cog, description="Kick, ban and time out members."):
             try:
                 await ctx.guild.unban(user, reason=audit_reason(action))
             except discord.NotFound as error:
-                raise ModerationError("That user isn't banned.") from error
+                raise UserError("That user isn't banned.") from error
 
         await self._enforce(ctx, action, lift_ban, notify=False)
 

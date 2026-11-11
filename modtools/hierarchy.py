@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import discord
 from discord.ext import commands
 
-from modtools.errors import ModerationError
+from core.errors import UserError
 
 
 @dataclass(frozen=True)
@@ -32,7 +32,7 @@ def ensure_can_moderate(ctx: commands.Context, target: discord.Member) -> None:
         _standing_of(ctx.author), _standing_of(target), _standing_of(guild.me), guild.owner_id
     )
     if error:
-        raise ModerationError(error)
+        raise UserError(error)
 
 
 def _standing_of(member: discord.Member) -> Standing:

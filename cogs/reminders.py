@@ -7,7 +7,7 @@ from discord.ext import commands, tasks
 
 import config
 from core.durations import parse_duration
-from utilities.errors import UtilityError
+from core.errors import UserError
 from utilities.reminder_store import Reminder
 from views.reminders_view import build_reminders_view, format_delivery
 
@@ -38,7 +38,7 @@ class Reminders(commands.Cog, description="Get reminded about things later."):
     async def remind(self, ctx: commands.Context, duration: str, *, text: str) -> None:
         text = text.strip()
         if len(text) > MAX_REMINDER_LENGTH:
-            raise UtilityError(f"Keep reminders under {MAX_REMINDER_LENGTH} characters.")
+            raise UserError(f"Keep reminders under {MAX_REMINDER_LENGTH} characters.")
         try:
             delay = parse_duration(duration, timedelta(days=config.MAX_REMINDER_DAYS))
         except ValueError as error:
@@ -46,7 +46,7 @@ class Reminders(commands.Cog, description="Get reminded about things later."):
 
         store = self.bot.reminder_store
         if await store.count_for(ctx.author.id) >= config.MAX_REMINDERS_PER_USER:
-            raise UtilityError(
+            raise UserError(
                 f"You can have up to {config.MAX_REMINDERS_PER_USER} pending reminders. "
                 "Cancel one with `/unremind` first."
             )
@@ -72,7 +72,7 @@ class Reminders(commands.Cog, description="Get reminded about things later."):
     @app_commands.describe(reminder_id="The number shown by /reminders")
     async def unremind(self, ctx: commands.Context, reminder_id: int) -> None:
         if not await self.bot.reminder_store.cancel(ctx.author.id, reminder_id):
-            raise UtilityError(f"You have no reminder `#{reminder_id}`.")
+            raise UserError(f"You have no reminder `#{reminder_id}`.")
         await ctx.send(f"Cancelled reminder `#{reminder_id}`.", ephemeral=True)
 
     @tasks.loop(seconds=REMINDER_CHECK_SECONDS)
