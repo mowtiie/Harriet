@@ -1,10 +1,13 @@
 import random
+from datetime import datetime
 
 from discord import app_commands
 from discord.ext import commands
 
 from features.tools.choices import split_choices
 from features.tools.dice import format_roll, parse_dice, roll_dice
+from features.tools.timezones import split_timezone
+from features.tools.when import format_time_reply, parse_when
 from views.style import NO_MENTIONS
 
 
@@ -25,6 +28,22 @@ class Tools(commands.Cog, description="Small helpers for everyday decisions."):
             raise commands.BadArgument(str(error)) from error
         result = format_roll(parsed, roll_dice(parsed, self._rng))
         await ctx.send(f"Rolled `{dice.strip()}`: {result}", allowed_mentions=NO_MENTIONS)
+
+    @commands.hybrid_command(
+        name="time",
+        description="Turn a time into a link everyone sees in their own timezone",
+        extras={"examples": ["time tomorrow 8pm London", "time friday 18:30 EST", "time in 2h"]},
+    )
+    @app_commands.describe(
+        when="When, then the timezone: tomorrow 8pm London, friday 18:30 UTC+2, in 2h (default UTC)"
+    )
+    async def time(self, ctx: commands.Context, *, when: str) -> None:
+        try:
+            zone, text = split_timezone(when)
+            moment = parse_when(text, datetime.now(zone))
+        except ValueError as error:
+            raise commands.BadArgument(str(error)) from error
+        await ctx.send(format_time_reply(moment), allowed_mentions=NO_MENTIONS)
 
     @commands.hybrid_command(
         name="choose",

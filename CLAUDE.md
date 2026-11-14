@@ -145,7 +145,7 @@ Requires Python 3.10+ and a valid `DISCORD_TOKEN` in `.env`. Bot will `sys.exit(
 
 ## Dependencies
 
-Kept minimal: `discord.py` (with voice), `python-dotenv` and `yt-dlp` (for music). Before adding a new dependency, check whether the standard library covers it. Pin only major versions in `requirements.txt`.
+Kept minimal: `discord.py` (with voice), `python-dotenv`, `yt-dlp` (for music) and `tzdata` (timezone data for `/time`, which Windows lacks). Before adding a new dependency, check whether the standard library covers it. Pin only major versions in `requirements.txt`.
 
 The one exception is `davey` (voice encryption, pulled in by `discord.py[voice]`), pinned to `<0.2`. Its 0.2 release stopped activating encryption keys on its own, which discord.py 2.7 does not handle, so audio is sent but nobody hears it. Remove the pin only after checking that discord.py supports it.
 

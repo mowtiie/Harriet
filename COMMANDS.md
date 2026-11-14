@@ -45,8 +45,11 @@ Games are played with buttons (letter menus for `hangman`, a pop-up form for `gu
 | `/coinflip` | Flip a coin | Anyone |
 | `/roll [dice]` | Roll dice like `d20`, `2d6` or `4d8+3` | Anyone |
 | `/choose <a, b, c>` | Pick one option at random | Anyone |
+| `/time <when> [timezone]` | Turn a time like `tomorrow 8pm London` into a link everyone sees in their own timezone | Anyone |
 | `/remind <duration> <text>` | Get a reminder after `30m`, `2h`, `1d`, `1h30m`, etc. | Anyone |
 | `/reminders`, `/unremind <id>` | List or cancel your pending reminders | Anyone |
+
+**Time.** Write the time and then the timezone, all in one go: `/time tomorrow 8pm London`. It understands `8pm`, `20:45`, `noon`, `tomorrow`, weekdays like `friday 18:30`, dates like `2026-12-25 09:00`, and `in 2h30m`. The timezone can be a city (`London`, `New York`), a name (`Europe/London`), an abbreviation (`EST`, `PST`) or an offset (`UTC+2`), and defaults to UTC. Harriet replies with a Discord timestamp that shows in each reader's own timezone, plus codes to copy and paste elsewhere.
 
 Reminders are saved in the database, so they survive restarts. They are posted in the channel where you set them, pinging only you, and fall back to a DM if that channel is gone. A reminder that came due while the bot was offline is delivered late with a note.
 
