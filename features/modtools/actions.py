@@ -63,13 +63,20 @@ async def _notify_target(action: ModAction) -> bool:
 
 
 async def _post_to_modlog(bot: commands.Bot, action: ModAction) -> None:
-    raw_channel_id = await bot.guild_settings.get(action.guild.id, MODLOG_CHANNEL_KEY)
+    await post_to_modlog(bot, action.guild, build_modlog_view(action))
+
+
+async def post_to_modlog(
+    bot: commands.Bot, guild: discord.Guild, view: discord.ui.LayoutView
+) -> None:
+    """Posts to the server's mod-log channel, if it has one set."""
+    raw_channel_id = await bot.guild_settings.get(guild.id, MODLOG_CHANNEL_KEY)
     if raw_channel_id is None:
         return
-    channel = action.guild.get_channel(int(raw_channel_id))
+    channel = guild.get_channel(int(raw_channel_id))
     if not isinstance(channel, discord.TextChannel):
         return
     try:
-        await channel.send(view=build_modlog_view(action), allowed_mentions=NO_MENTIONS)
+        await channel.send(view=view, allowed_mentions=NO_MENTIONS)
     except discord.HTTPException:
         log.warning("Could not post to the mod-log channel %s", channel, exc_info=True)

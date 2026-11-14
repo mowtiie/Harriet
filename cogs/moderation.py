@@ -7,6 +7,15 @@ from discord.ext import commands
 import config
 from core.errors import UserError
 from core.time_format import SECONDS_PER_HOUR
+from features.modtools.actions import post_to_modlog
+from features.modtools.say import (
+    MAX_LOGGED_LENGTH,
+    SAY_COOLDOWN_SECONDS,
+    build_say_log_view,
+    ensure_can_say,
+    mention_rules,
+    prepare_message,
+)
 
 log = logging.getLogger(__name__)
 
@@ -78,6 +87,53 @@ class Moderation(commands.Cog, description="Keep your channels tidy."):
             ctx.guild,
         )
         await send_confirmation(ctx, clear_summary(count))
+
+    @commands.hybrid_command(
+        name="say",
+        description="Make me send a message, here or in another channel",
+        extras={"examples": ["say Welcome, everyone!", "say #announcements Restarting at 8pm"]},
+    )
+    @commands.guild_only()
+    @commands.has_permissions(manage_messages=True)
+    @commands.cooldown(1, SAY_COOLDOWN_SECONDS, commands.BucketType.user)
+    @app_commands.describe(
+        message="What to say (type \\n for a new line)",
+        channel="Where to say it (default: this channel)",
+    )
+    async def say(
+        self, ctx: commands.Context, channel: discord.TextChannel | None = None, *, message: str
+    ) -> None:
+        if ctx.interaction:
+            await ctx.defer(ephemeral=True)
+        target = channel or text_channel_of(ctx)
+        ensure_can_say(target, ctx.author, ctx.guild.me)
+        try:
+            text = prepare_message(message)
+        except ValueError as error:
+            raise commands.BadArgument(str(error)) from error
+
+        can_ping = target.permissions_for(ctx.author).mention_everyone
+        sent = await target.send(text, allowed_mentions=mention_rules(can_ping))
+        log.info(
+            "%s (id=%s) said %r in #%s (guild=%s)",
+            ctx.author,
+            ctx.author.id,
+            text[:MAX_LOGGED_LENGTH],
+            target,
+            ctx.guild,
+        )
+        await post_to_modlog(self.bot, ctx.guild, build_say_log_view(ctx.author, target, sent))
+        await self._confirm_say(ctx, target)
+
+    @staticmethod
+    async def _confirm_say(ctx: commands.Context, target: discord.TextChannel) -> None:
+        if ctx.interaction:
+            await ctx.send(f"Sent in {target.mention}.", ephemeral=True)
+            return
+        try:
+            await ctx.message.delete()
+        except discord.HTTPException:
+            log.debug("Couldn't delete the say command message in #%s", ctx.channel)
 
     @commands.hybrid_command(
         name="slowmode",

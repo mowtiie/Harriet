@@ -72,11 +72,13 @@ Reminders are saved in the database, so they survive restarts. They are posted i
 | `/warn <member> <reason>` | Warn a member and record it | Moderate Members |
 | `/warnings <member>`, `/clearwarnings <member>` | Show or remove a member's warnings | Moderate Members |
 | `/clear [n]` | Delete the last n messages (1 to `MAX_CLEAR_AMOUNT`, default 5) | Manage Messages |
+| `/say [channel] <message>` | Make the bot send a message, here or in another channel | Manage Messages |
 | `/slowmode <seconds>` | Set channel slowmode (0 turns it off) | Manage Channels |
 | `/lock`, `/unlock` | Stop or allow `@everyone` sending in the channel | Manage Channels |
 
 - Every action checks the role hierarchy: you can't act on yourself, the server owner, or anyone whose top role is equal to or higher than yours or the bot's.
 - Kick, ban, timeout and warn DM the member first (best effort, since closed DMs are skipped). Reasons also appear in the server's audit log.
+- `/say` posts as the bot, with nothing showing who ran it, but every use is logged in the bot log and the mod-log channel with who said what and where. You can only use it in channels you could post in yourself. Type `\n` for a line break. `@everyone`, `@here` and role pings only work if you have the Mention Everyone permission, and there is a 5-second cooldown. With the prefix, the bot deletes your command message afterwards if it can.
 - `unlock` resets the `@everyone` send permission to its default, which removes any explicit allow you had set on that channel.
 
 ## Info & Settings
