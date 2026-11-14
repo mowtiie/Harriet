@@ -94,6 +94,10 @@ class StaleModuleTests(unittest.TestCase):
             ["cogs._game_support", "core.reloading_new", "features.games.tictactoe", "views.style"],
         )
 
+    def test_modules_holding_state_that_must_outlive_a_reload_are_never_purged(self) -> None:
+        imported = ["core.live_views", "core.durations"]
+        self.assertEqual(stale_modules(imported, set(), set()), ["core.durations"])
+
     def test_purging_forgets_only_the_stale_modules(self) -> None:
         modules = {"features.games.rps": object(), "core.errors": object(), "json": object()}
         purged = purge_stale_modules(self.PINNED, set(), modules)

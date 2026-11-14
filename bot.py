@@ -12,6 +12,7 @@ from core.errors import GENERIC_ERROR_MESSAGE, describe_error
 from core.guild_settings import GuildSettings
 from core.presence import build_presence
 from core.reloading import discover_extensions
+from features.devtools.git_info import current_commit
 from features.leveling.store import ExperienceStore
 from features.modtools.warning_store import WarningStore
 from features.reminders.store import ReminderStore
@@ -19,7 +20,8 @@ from logger import setup_logging
 
 log = logging.getLogger("bot")
 
-COGS_DIR = Path(__file__).parent / "cogs"
+ROOT_DIR = Path(__file__).parent
+COGS_DIR = ROOT_DIR / "cogs"
 
 
 async def on_command_error(ctx: commands.Context, error: commands.CommandError) -> None:
@@ -100,6 +102,8 @@ def create_bot() -> commands.Bot:
     async def setup_hook() -> None:
         """Runs once per process, unlike on_ready."""
         bot.core_modules = frozenset(sys.modules)
+        bot.started_at = discord.utils.utcnow()
+        bot.started_commit = await asyncio.to_thread(current_commit, ROOT_DIR)
         await load_cogs(bot)
         try:
             synced = await bot.tree.sync()

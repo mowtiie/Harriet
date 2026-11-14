@@ -71,7 +71,7 @@ Settings live in `.env`. Invalid values stop startup with an error naming the va
 
 ## Privacy
 
-The bot sends no data anywhere and has no analytics. It keeps only per-server settings, warnings, pending reminders and XP totals, in the local SQLite file at `DATABASE_PATH`. Logs go to `logs/bot.log` on the host and are cleared on every startup.
+The bot sends no data anywhere and has no analytics. It keeps only per-server settings, warnings, pending reminders and XP totals, in the local SQLite file at `DATABASE_PATH`. Logs go to `logs/bot.log` on the host and are cleared on every startup. The owner-only `/backup` and `/logs` commands can send a copy of the database, or the log, to the bot owner through Discord.
 
 ## License
 

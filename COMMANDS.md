@@ -90,5 +90,12 @@ Reminders are saved in the database, so they survive restarts. They are posted i
 | `/setmodlog [channel]` | Set the channel moderation actions are logged to (empty turns it off) | Manage Server |
 | `/setpresence` | Change the bot's presence | Bot owner |
 | `/reload [cog]` | Reload one cog, or all of them, without restarting the bot | Bot owner |
+| `/status` | Uptime, version, games in progress, errors since start and more | Bot owner |
+| `/logs [lines] [all\|errors]` | Show the end of the log (default 25 lines), or only the errors | Bot owner |
+| `/backup` | Send you a copy of the database | Bot owner |
+
+The owner commands answer privately. Used with the prefix, `/status`, `/logs` and `/backup` DM you instead, because a reply in the channel would be public.
+
+`/status` shows the commit you're running, and the one you started on if they differ, so you can tell whether a restart or `/reload` is still needed. `/logs` shows long output as a file, and the log is cleared on every start, so `/logs errors` means errors since then. `/backup` takes a consistent snapshot of the SQLite file without touching the original.
 
 `/reload` also loads new cog files, unloads deleted ones, and re-syncs slash commands only when they changed. If an edit has an error, the message says what failed and the previous version keeps running. Changes to `bot.py`, `config.py`, `.env`, intents, the error classes or the database stores still need a real restart. Reloading `music` disconnects it from voice.

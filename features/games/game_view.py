@@ -2,6 +2,7 @@ from collections.abc import Awaitable, Callable, Iterable
 
 from discord import ui
 
+from core.live_views import track
 from views.restricted_view import RestrictedView
 
 WinHandler = Callable[[int | None], Awaitable[str | None]]
@@ -26,6 +27,7 @@ class GameView(RestrictedView):
         super().__init__(player_ids, timeout_seconds)
         self._on_finish = on_finish
         self._result_note: str | None = None
+        track(self)
 
     async def _record_result(self, winner_id: int | None) -> None:
         if self._on_finish is not None:

@@ -21,6 +21,8 @@ log = logging.getLogger(__name__)
 
 EXTENSION_GLOB = "[!_]*.py"
 RELOADABLE_ROOTS = frozenset({"cogs", "core", "features", "views"})
+# State that has to outlive a reload, so a reload must not replace the module that holds it.
+SURVIVES_RELOAD = frozenset({"core.live_views"})
 MAX_FAILURE_LENGTH = 200
 MAX_REPORT_LENGTH = 1900
 
@@ -77,6 +79,7 @@ def stale_modules(
         and name.split(".")[0] in RELOADABLE_ROOTS
         and name not in pinned
         and name not in extensions
+        and name not in SURVIVES_RELOAD
     )
 
 

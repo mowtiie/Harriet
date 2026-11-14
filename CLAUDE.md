@@ -91,6 +91,10 @@ Follow `cogs/general.py` as the canonical template.
 
 `bot.py` records the modules it imported at startup (`bot.core_modules`) and a reload never replaces them. Anything `bot.py` imports (`config`, `core.errors`, the stores) therefore needs a real restart to change. Keep it that way: replacing `core.errors` would leave the global error handlers holding the old `UserError` class.
 
+State that has to outlive a reload (such as the registry of running games in `core/live_views.py`) lives in a module named in `SURVIVES_RELOAD` in `core/reloading.py`, which a reload never replaces.
+
+Owner-only commands that show private data (`/status`, `/logs`, `/backup`) go through `deliver_privately` in `cogs/developer.py`: a private reply for slash commands and a DM for prefix commands, never the channel.
+
 When writing a cog, release what it owns in `cog_unload` (cancel `tasks.loop`s, disconnect voice), because a reload runs it.
 
 ## Error handling
