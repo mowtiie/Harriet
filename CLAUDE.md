@@ -77,7 +77,7 @@ Keep command bodies thin: parse arguments, delegate to a helper, send a response
 
 1. Create `cogs/<name>.py`.
 2. Define a `commands.Cog` subclass with a `description` (the help menu uses it as the category blurb).
-3. Define an async `setup(bot)` function at module level that calls `await bot.add_cog(...)`.
+3. Define an async `setup(bot)` function at module level that calls `await bot.add_cog(...)`. Then add the cog's name to a group in `features/helpinfo/help_groups.py` so `/help` files it under the right category (a test fails if you forget).
 4. Add `log = logging.getLogger(__name__)` at the top and use it instead of `print`.
 5. Give each command `extras={"examples": [...]}` so `/help` can show sample uses.
 6. Put anything beyond a few lines (logic, storage, message layout) in `features/<name>/` and add matching tests under `tests/features/<name>/`.

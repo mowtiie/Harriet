@@ -3,6 +3,8 @@ from dataclasses import dataclass
 
 from discord.ext import commands
 
+from features.helpinfo.help_groups import GROUP_BY_COG_NAME, GROUP_POSITION
+
 DEFAULT_CATEGORY_NAME = "Other"
 NO_DESCRIPTION = "No description provided."
 
@@ -24,7 +26,9 @@ class CategoryHelp:
 
 
 def category_name_of(command: commands.Command) -> str:
-    return command.cog_name or DEFAULT_CATEGORY_NAME
+    cog_name = command.cog_name or DEFAULT_CATEGORY_NAME
+    group = GROUP_BY_COG_NAME.get(cog_name)
+    return group.name if group else cog_name
 
 
 def describe_command(command: commands.Command) -> CommandHelp:
@@ -41,7 +45,13 @@ def group_into_categories(candidates: Iterable[commands.Command]) -> list[Catego
     grouped: dict[str, list[commands.Command]] = {}
     for command in candidates:
         grouped.setdefault(category_name_of(command), []).append(command)
-    return [_build_category(members) for _, members in sorted(grouped.items())]
+    ordered_names = sorted(grouped, key=_category_sort_key)
+    return [_build_category(grouped[name]) for name in ordered_names]
+
+
+def _category_sort_key(name: str) -> tuple[int, str]:
+    """Known groups keep their declared order; any other cog follows, alphabetically."""
+    return GROUP_POSITION.get(name, len(GROUP_POSITION)), name
 
 
 def _build_category(members: list[commands.Command]) -> CategoryHelp:
@@ -49,9 +59,16 @@ def _build_category(members: list[commands.Command]) -> CategoryHelp:
     ordered = sorted(members, key=lambda command: command.qualified_name)
     return CategoryHelp(
         name=category_name_of(first),
-        description=getattr(first.cog, "description", None) or "",
+        description=_description_of(first),
         commands=tuple(describe_command(command) for command in ordered),
     )
+
+
+def _description_of(command: commands.Command) -> str:
+    group = GROUP_BY_COG_NAME.get(command.cog_name or "")
+    if group:
+        return group.description
+    return getattr(command.cog, "description", None) or ""
 
 
 def find_command(candidates: Iterable[commands.Command], query: str) -> commands.Command | None:
