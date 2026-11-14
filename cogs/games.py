@@ -11,6 +11,8 @@ from cogs._game_support import (
     player_names,
     resolve_opponent,
 )
+from features.games.battleship import new_battleship_game
+from features.games.battleship_view import BattleshipView
 from features.games.connect_four import ConnectFourGame
 from features.games.connect_four_view import ConnectFourView
 from features.games.rps import RpsGame
@@ -60,6 +62,27 @@ class Games(commands.Cog, description="Games to play against me or another membe
         opponent = resolve_opponent(ctx, member)
         view = TicTacToeView(
             TicTacToeGame(ctx.author.id, opponent.id),
+            player_names(ctx, opponent),
+            config.GAME_TIMEOUT_SECONDS,
+            build_win_handler(self.bot, ctx, vs_bot=member is None),
+            bot_id=None if member else opponent.id,
+            rng=self._rng,
+        )
+        view.message = await ctx.send(view=view)
+
+    @commands.hybrid_command(
+        name="battleship",
+        description="Sink the other fleet, against me or another member",
+        extras={"examples": ["battleship", "battleship @user"]},
+    )
+    @commands.guild_only()
+    @app_commands.describe(member="Who to challenge (leave empty to play me)")
+    async def battleship(
+        self, ctx: commands.Context, member: discord.Member | None = None
+    ) -> None:
+        opponent = resolve_opponent(ctx, member)
+        view = BattleshipView(
+            new_battleship_game(ctx.author.id, opponent.id, self._rng),
             player_names(ctx, opponent),
             config.GAME_TIMEOUT_SECONDS,
             build_win_handler(self.bot, ctx, vs_bot=member is None),

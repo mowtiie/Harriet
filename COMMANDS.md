@@ -19,6 +19,7 @@ Every command works as a slash command (`/play`) and as a prefix command (`do pl
 | `/rps [member]` | Rock paper scissors against the bot, or a member (picks stay hidden until both choose) | Anyone |
 | `/tictactoe [member]` | Tic-tac-toe against the bot, or a member | Anyone |
 | `/connectfour [member]` | Connect four against the bot, or a member | Anyone |
+| `/battleship [member]` | Battleship on a 5×5 board against the bot, or a member | Anyone |
 | `/blackjack` | Blackjack against the bot as the dealer (hit or stand; the dealer stands on 17) | Anyone |
 | `/hangman` | Guess a random word one letter at a time before the drawing is finished | Anyone |
 | `/guess` | Guess my number from 1 to 100 in 8 tries, with higher or lower hints | Anyone |
@@ -29,7 +30,9 @@ Every command works as a slash command (`/play`) and as a prefix command (`do pl
 
 Games are played with buttons (letter menus for `hangman`, a pop-up form for `guess`) and only the players can use them. They live in memory and end after `GAME_TIMEOUT_SECONDS` of inactivity, so a restart ends any game in progress.
 
-**XP and levels.** XP comes only from winning: `XP_PER_WIN` for beating another member at `rps`, `tictactoe` or `connectfour`, and the smaller `XP_PER_BOT_WIN` for beating the bot at any game. `blackjack`, `hangman`, `guess` and `minesweeper` are always against the bot. Losses, ties and expired games earn nothing. Reaching a new level posts a short announcement in the channel where the game was played. Level `n` needs `100 + 50 * n` XP to complete, and only the total is stored.
+**Battleship.** Each side gets a random fleet of three ships (3, 2 and 2 squares) on a 5×5 board, and players take turns firing at squares like `B3`. The message only shows hits (💥), sunk ships (🔥) and misses (🌊). Press **My fleet** to see your own board privately. Against the bot, it fires back right after each of your shots.
+
+**XP and levels.** XP comes only from winning: `XP_PER_WIN` for beating another member at `rps`, `tictactoe`, `connectfour` or `battleship`, and the smaller `XP_PER_BOT_WIN` for beating the bot at any game. `blackjack`, `hangman`, `guess` and `minesweeper` are always against the bot. Losses, ties and expired games earn nothing. Reaching a new level posts a short announcement in the channel where the game was played. Level `n` needs `100 + 50 * n` XP to complete, and only the total is stored.
 
 ## Fun & Tools
 

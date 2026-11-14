@@ -9,8 +9,6 @@ from features.games.game_view import GameView, WinHandler
 
 
 class TurnGame(Protocol):
-    turn: str
-
     @property
     def player_ids(self) -> tuple[int, int]: ...
 
@@ -23,7 +21,7 @@ class TurnGame(Protocol):
     @property
     def is_over(self) -> bool: ...
 
-    def play(self, player_id: int, move: int) -> None: ...
+    def play(self, player_id: int, move: int) -> object: ...
 
 
 class TurnBasedView(GameView):
