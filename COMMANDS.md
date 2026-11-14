@@ -20,6 +20,7 @@ Every command works as a slash command (`/play`) and as a prefix command (`do pl
 | `/tictactoe [member]` | Tic-tac-toe against the bot, or a member | Anyone |
 | `/connectfour [member]` | Connect four against the bot, or a member | Anyone |
 | `/battleship [member]` | Battleship on a 5×5 board against the bot, or a member | Anyone |
+| `/cookie` | Work out who stole Harriet's cookie from logic clues, with friends or on your own | Anyone |
 | `/blackjack` | Blackjack against the bot as the dealer (hit or stand; the dealer stands on 17) | Anyone |
 | `/hangman` | Guess a random word one letter at a time before the drawing is finished | Anyone |
 | `/guess` | Guess my number from 1 to 100 in 8 tries, with higher or lower hints | Anyone |
@@ -32,7 +33,9 @@ Games are played with buttons (letter menus for `hangman`, a pop-up form for `gu
 
 **Battleship.** Each side gets a random fleet of three ships (3, 2 and 2 squares) on a 5×5 board, and players take turns firing at squares like `B3`. The message only shows hits (💥), sunk ships (🔥) and misses (🌊). Press **My fleet** to see your own board privately. Against the bot, it fires back right after each of your shots.
 
-**XP and levels.** XP comes only from winning: `XP_PER_WIN` for beating another member at `rps`, `tictactoe`, `connectfour` or `battleship`, and the smaller `XP_PER_BOT_WIN` for beating the bot at any game. `blackjack`, `hangman`, `guess` and `minesweeper` are always against the bot. Losses, ties and expired games earn nothing. Reaching a new level posts a short announcement in the channel where the game was played. Level `n` needs `100 + 50 * n` XP to complete, and only the total is stored.
+**The cookie mystery.** Everyone who presses **Join** becomes a detective and a suspect, and fictional characters fill the remaining seats up to five. Harriet makes up a new case each time: the suspects stood in different rooms along a corridor, and whoever was in the room with the cookie jar is the thief. Clues come out one at a time with **Next clue**, and the case is built so that after the last clue only one suspect fits. Each detective gets one accusation from the menu. A wrong one knocks you out, and the first correct one wins. If everyone is wrong, Harriet wins. The message then shows what really happened. A case goes cold after `COOKIE_CASE_TIMEOUT_SECONDS` of inactivity.
+
+**XP and levels.** XP comes only from winning: `XP_PER_WIN` for beating another member at `rps`, `tictactoe`, `connectfour` or `battleship`, and the smaller `XP_PER_BOT_WIN` for beating the bot at any game. `blackjack`, `hangman`, `guess`, `minesweeper` and `cookie` are always against the bot, so the first detective to solve a cookie case earns `XP_PER_BOT_WIN`. Losses, ties and expired games earn nothing. Reaching a new level posts a short announcement in the channel where the game was played. Level `n` needs `100 + 50 * n` XP to complete, and only the total is stored.
 
 ## Fun & Tools
 

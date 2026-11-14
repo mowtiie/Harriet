@@ -65,6 +65,7 @@ Settings live in `.env`. Invalid values stop startup with an error naming the va
 | `MAX_REMINDERS_PER_USER` | Most pending reminders one person can have | `10` |
 | `MAX_REMINDER_DAYS` | Furthest ahead a reminder can be set, in days | `365` |
 | `GAME_TIMEOUT_SECONDS` | Inactivity before a game expires | `60` |
+| `COOKIE_CASE_TIMEOUT_SECONDS` | Inactivity before a `cookie` mystery goes cold (puzzles need more thinking time) | `300` |
 | `XP_PER_WIN` | XP for winning a game against another member | `50` |
 | `XP_PER_BOT_WIN` | XP for beating the bot at a game | `10` |
 
