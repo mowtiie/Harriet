@@ -33,7 +33,7 @@ HELP_GROUPS = (
     HelpGroup(
         "Info & Settings",
         "Look up members, roles and the server, and change settings.",
-        ("Information", "Settings", "Presence"),
+        ("Information", "Settings", "Presence", "Developer"),
     ),
 )
 

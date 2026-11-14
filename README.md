@@ -14,6 +14,7 @@ Just a simple and helpful Discord bot that productively wants to make you happy.
 - Utilities: member, server and role lookups, reminders, dice and random picks
 - Per-server settings stored in SQLite
 - Customizable presence (via `.env` or `/setpresence`)
+- Owner-only `/reload` to pick up code changes without taking the bot offline
 - Logging to file and console, cleared on every restart
 
 ## Setup
@@ -123,7 +124,14 @@ All settings live in `.env`. Invalid values stop startup with an error naming th
 | `/setxp <member> <amount>`, `/resetxp <member>` | Set or clear a member's XP | Manage Server |
 | `/clear [n]`, `do clear [n]` | Delete the last n messages (1 to `MAX_CLEAR_AMOUNT`, default 5) | Manage Messages |
 | `/setpresence`, `do setpresence` | Change bot presence | Bot owner |
+| `/reload [cog]`, `do reload [cog]` | Reload one cog, or all of them, without restarting the bot | Bot owner |
 | `/invite`, `do invite` | Get the bot's invite link | Bot owner |
+
+## Reloading without a restart
+
+`/reload` re-reads the code for every cog (or one, like `/reload games`) while the bot stays online. It also loads new cog files, unloads deleted ones, and re-syncs slash commands only when their definitions changed. If an edit has an error, the message says what failed and the previous version keeps running.
+
+Some changes still need a real restart: `bot.py`, `config.py`, `.env`, intents, and anything the bot sets up at startup, such as the shared error classes and the database stores. Reloading `music` disconnects it from voice, and games already on screen finish on the old code.
 
 ## Games
 

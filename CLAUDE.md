@@ -85,6 +85,14 @@ Keep command bodies thin: parse arguments, delegate to a helper, send a response
 
 Follow `cogs/general.py` as the canonical template.
 
+## Reloading
+
+`/reload` (owner only, `cogs/developer.py`, logic in `core/reloading.py`) reloads cogs without restarting. It forgets every project module that a cog imported after startup, so edits under `features/`, `views/` and `core/` are picked up too, then reloads the cogs and re-syncs slash commands only if they changed.
+
+`bot.py` records the modules it imported at startup (`bot.core_modules`) and a reload never replaces them. Anything `bot.py` imports (`config`, `core.errors`, the stores) therefore needs a real restart to change. Keep it that way: replacing `core.errors` would leave the global error handlers holding the old `UserError` class.
+
+When writing a cog, release what it owns in `cog_unload` (cancel `tasks.loop`s, disconnect voice), because a reload runs it.
+
 ## Error handling
 
 Three global handlers in `bot.py` catch everything:

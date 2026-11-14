@@ -1,5 +1,6 @@
 import logging
 import platform
+from collections.abc import Collection
 
 import discord
 from discord import app_commands
@@ -57,7 +58,7 @@ class Help(
             await ctx.defer(ephemeral=True)
 
         visible = [c for c in self.bot.walk_commands() if await is_visible_to(c, ctx)]
-        mentions = await self._load_slash_mentions()
+        mentions = await self._load_slash_mentions({c.qualified_name.split()[0] for c in visible})
 
         if command is None:
             view = HelpView(
@@ -114,14 +115,17 @@ class Help(
             support_url=config.BOT_SUPPORT_URL,
         )
 
-    async def _load_slash_mentions(self) -> dict[str, str]:
-        if self._slash_mentions is None:
-            try:
-                synced = await self.bot.tree.fetch_commands()
-            except discord.HTTPException:
-                log.warning("Could not fetch slash commands for mentions", exc_info=True)
-                return {}
-            self._slash_mentions = {command.name: command.mention for command in synced}
+    async def _load_slash_mentions(self, wanted_names: Collection[str]) -> dict[str, str]:
+        """Fetch the slash command links, again whenever a command we need is missing from them."""
+        cached = self._slash_mentions
+        if cached is not None and set(wanted_names) <= cached.keys():
+            return cached
+        try:
+            synced = await self.bot.tree.fetch_commands()
+        except discord.HTTPException:
+            log.warning("Could not fetch slash commands for mentions", exc_info=True)
+            return cached or {}
+        self._slash_mentions = {command.name: command.mention for command in synced}
         return self._slash_mentions
 
 

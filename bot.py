@@ -11,6 +11,7 @@ import config
 from core.errors import GENERIC_ERROR_MESSAGE, describe_error
 from core.guild_settings import GuildSettings
 from core.presence import build_presence
+from core.reloading import discover_extensions
 from features.leveling.store import ExperienceStore
 from features.modtools.warning_store import WarningStore
 from features.reminders.store import ReminderStore
@@ -68,8 +69,7 @@ async def on_error(event_method: str, *args: object, **kwargs: object) -> None:
 
 
 async def load_cogs(bot: commands.Bot) -> None:
-    for path in sorted(COGS_DIR.glob("[!_]*.py")):
-        extension = f"cogs.{path.stem}"
+    for extension in discover_extensions(COGS_DIR):
         try:
             await bot.load_extension(extension)
             log.info("Loaded cog: %s", extension)
@@ -99,6 +99,7 @@ def create_bot() -> commands.Bot:
 
     async def setup_hook() -> None:
         """Runs once per process, unlike on_ready."""
+        bot.core_modules = frozenset(sys.modules)
         await load_cogs(bot)
         try:
             synced = await bot.tree.sync()
