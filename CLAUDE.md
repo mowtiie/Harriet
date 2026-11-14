@@ -114,6 +114,7 @@ Default presence comes from `BOT_STATUS`, `BOT_ACTIVITY_TYPE`, `BOT_ACTIVITY_NAM
 ## Config conventions
 
 - All env vars are defined with defaults in `config.py`, documented in `.env.example`, and surfaced in README's config table.
+- Commands are listed in `COMMANDS.md`, not the README. Add or change a command's row there, under the same group `/help` uses.
 - When adding a new env var, update all three.
 - No `os.getenv` calls outside `config.py`.
 
