@@ -9,7 +9,7 @@ Just a simple and helpful Discord bot that productively wants to make you happy.
 - Music in voice channels from YouTube, links, or local files
 - Moderation: kick, ban, timeout, warnings, channel lock and slowmode, with an optional mod-log channel
 - Fun: 8-ball and coin flip
-- Games: button-based rock paper scissors, tic-tac-toe, connect four, blackjack and hangman
+- Games: button-based rock paper scissors, tic-tac-toe, connect four, blackjack, hangman and a number guessing game
 - XP and levels earned by winning games, with a server leaderboard
 - Utilities: member, server and role lookups, reminders, dice and random picks
 - Per-server settings stored in SQLite
@@ -77,9 +77,9 @@ All settings live in `.env`. Invalid values stop startup with an error naming th
 | `MUSIC_IDLE_TIMEOUT_SECONDS` | Seconds of silence before the bot leaves voice | `120` |
 | `MAX_REMINDERS_PER_USER` | Most pending reminders one person can have | `10` |
 | `MAX_REMINDER_DAYS` | Furthest ahead a reminder can be set, in days | `365` |
-| `GAME_TIMEOUT_SECONDS` | Inactivity before a game of `rps`, `tictactoe`, `connectfour`, `blackjack` or `hangman` expires | `60` |
+| `GAME_TIMEOUT_SECONDS` | Inactivity before a game of `rps`, `tictactoe`, `connectfour`, `blackjack`, `hangman` or `guess` expires | `60` |
 | `XP_PER_WIN` | XP for winning a game against another member | `50` |
-| `XP_PER_BOT_WIN` | XP for beating the bot at `rps`, `tictactoe`, `connectfour`, `blackjack` or `hangman` | `10` |
+| `XP_PER_BOT_WIN` | XP for beating the bot at `rps`, `tictactoe`, `connectfour`, `blackjack`, `hangman` or `guess` | `10` |
 
 ## Commands
 
@@ -116,6 +116,7 @@ All settings live in `.env`. Invalid values stop startup with an error naming th
 | `/connectfour [member]` | Connect four against the bot, or a member | Anyone |
 | `/blackjack` | Blackjack against the bot as the dealer (hit or stand; the dealer stands on 17) | Anyone |
 | `/hangman` | Guess a random word one letter at a time before the drawing is finished | Anyone |
+| `/guess` | Guess my number from 1 to 100 in 8 tries, with higher or lower hints | Anyone |
 | `/rank [member]` | Show a member's level, XP and server rank | Anyone |
 | `/leaderboard` | Show the server's XP leaderboard | Anyone |
 | `/setxp <member> <amount>`, `/resetxp <member>` | Set or clear a member's XP | Manage Server |
@@ -125,11 +126,11 @@ All settings live in `.env`. Invalid values stop startup with an error naming th
 
 ## Games
 
-`rps`, `tictactoe`, `connectfour`, `blackjack` and `hangman` are played with buttons (or letter menus for `hangman`) and only the players can use them. Games live in memory and end after `GAME_TIMEOUT_SECONDS` of inactivity, so a restart ends any game in progress. Nothing about a game is stored.
+`rps`, `tictactoe`, `connectfour`, `blackjack`, `hangman` and `guess` are played with buttons (letter menus for `hangman`, a pop-up form for `guess`) and only the players can use them. Games live in memory and end after `GAME_TIMEOUT_SECONDS` of inactivity, so a restart ends any game in progress. Nothing about a game is stored.
 
 ## XP and levels
 
-XP comes only from winning games: `XP_PER_WIN` for beating another member at `rps`, `tictactoe` or `connectfour`, and the smaller `XP_PER_BOT_WIN` for beating the bot at any of them (`blackjack` and `hangman` are always against the bot, so they always pay `XP_PER_BOT_WIN`). Losses, ties and expired games earn nothing, and chatting or voice time earns nothing either. Reaching a new level posts a short announcement (without pinging anyone) in the channel where the game was played.
+XP comes only from winning games: `XP_PER_WIN` for beating another member at `rps`, `tictactoe` or `connectfour`, and the smaller `XP_PER_BOT_WIN` for beating the bot at any of them (`blackjack`, `hangman` and `guess` are always against the bot, so they always pay `XP_PER_BOT_WIN`). Losses, ties and expired games earn nothing, and chatting or voice time earns nothing either. Reaching a new level posts a short announcement (without pinging anyone) in the channel where the game was played.
 
 Level `n` needs `100 + 50 * n` XP to complete, so level 1 is 100 XP and level 10 is 3,250 XP in total. Only the total is stored, so the curve can change without migrating data. Members who leave are hidden from the leaderboard but keep their XP if they return.
 

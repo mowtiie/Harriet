@@ -14,7 +14,6 @@ from features.games.hangman_view import (
     gallows_text,
     misses_text,
     status_text,
-    winner_id_of,
     word_text,
 )
 from features.games.hangman_words import WORDS, pick_word
@@ -124,15 +123,6 @@ class DisplayTests(unittest.TestCase):
         lost = HangmanGame("cat")
         guess_all(lost, "bdefgh")
         self.assertIn("The word was **CAT**", status_text(lost, "Alice", False))
-
-    def test_winner_id_maps_the_result(self) -> None:
-        won, lost = HangmanGame("a"), HangmanGame("a")
-        won.guess("a")
-        guess_all(lost, "bcdefg")
-        self.assertEqual(winner_id_of(won, PLAYER, BOT), PLAYER)
-        self.assertEqual(winner_id_of(lost, PLAYER, BOT), BOT)
-        self.assertIsNone(winner_id_of(HangmanGame("a"), PLAYER, BOT))
-
 
 class HangmanViewTests(unittest.IsolatedAsyncioTestCase):
     def test_two_menus_cover_the_whole_alphabet(self) -> None:

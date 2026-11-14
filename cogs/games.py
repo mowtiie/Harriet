@@ -14,6 +14,8 @@ from features.games.game_view import WinHandler
 from features.games.hangman import HangmanGame
 from features.games.hangman_view import HangmanView
 from features.games.hangman_words import pick_word
+from features.games.number_guess import NumberGuessGame, pick_number
+from features.games.number_guess_view import NumberGuessView
 from features.games.rps import RpsGame
 from features.games.rps_view import RpsView
 from features.games.tictactoe import TicTacToeGame
@@ -126,6 +128,23 @@ class Games(commands.Cog, description="Games to play against me or other members
     async def hangman(self, ctx: commands.Context) -> None:
         view = HangmanView(
             HangmanGame(pick_word(self._rng)),
+            self._player_names(ctx, ctx.guild.me),
+            player_id=ctx.author.id,
+            bot_id=ctx.guild.me.id,
+            timeout_seconds=config.GAME_TIMEOUT_SECONDS,
+            on_finish=self._win_handler(ctx, vs_bot=True),
+        )
+        view.message = await ctx.send(view=view)
+
+    @commands.hybrid_command(
+        name="guess",
+        description="Guess the number I'm thinking of",
+        extras={"examples": ["guess"]},
+    )
+    @commands.guild_only()
+    async def guess(self, ctx: commands.Context) -> None:
+        view = NumberGuessView(
+            NumberGuessGame(pick_number(self._rng)),
             self._player_names(ctx, ctx.guild.me),
             player_id=ctx.author.id,
             bot_id=ctx.guild.me.id,

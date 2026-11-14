@@ -6,7 +6,7 @@ import discord
 from discord import ui
 
 from features.games.errors import GameError
-from features.games.game_view import GameView, WinHandler
+from features.games.game_view import GameView, WinHandler, solo_winner_id
 from features.games.hangman import HangmanGame
 from features.games.hangman_art import STAGES
 from views.style import ACCENT_COLOR, divider
@@ -36,12 +36,6 @@ def status_text(game: HangmanGame, player_name: str, timed_out: bool) -> str:
     if timed_out:
         return f"Timed out. The word was **{game.word}**."
     return IN_PROGRESS_TEXT
-
-
-def winner_id_of(game: HangmanGame, player_id: int, bot_id: int) -> int | None:
-    if game.is_won:
-        return player_id
-    return bot_id if game.is_lost else None
 
 
 class HangmanView(GameView):
@@ -106,7 +100,9 @@ class HangmanView(GameView):
             await interaction.response.send_message(str(error), ephemeral=True)
             return
         if self._game.is_over:
-            winner_id = winner_id_of(self._game, self._player_id, self._bot_id)
+            winner_id = solo_winner_id(
+                self._game.is_won, self._game.is_lost, self._player_id, self._bot_id
+            )
             await self._record_result(winner_id)
             self.stop()
         self._render()

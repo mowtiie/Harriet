@@ -7,6 +7,13 @@ from views.restricted_view import RestrictedView
 WinHandler = Callable[[int | None], Awaitable[str | None]]
 
 
+def solo_winner_id(won: bool, lost: bool, player_id: int, bot_id: int) -> int | None:
+    """The player on a win, the bot on a loss, and nobody while the game is undecided."""
+    if won:
+        return player_id
+    return bot_id if lost else None
+
+
 class GameView(RestrictedView):
     """A game that can hand its winner to a callback and show the note it returns."""
 
