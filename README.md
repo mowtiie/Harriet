@@ -78,7 +78,7 @@ All settings live in `.env`. Invalid values stop startup with an error naming th
 | `MAX_REMINDER_DAYS` | Furthest ahead a reminder can be set, in days | `365` |
 | `GAME_TIMEOUT_SECONDS` | Inactivity before a game of `rps` or `tictactoe` expires | `60` |
 | `XP_PER_WIN` | XP for winning a game against another member | `50` |
-| `XP_PER_BOT_WIN` | XP for beating the bot at `rps` | `10` |
+| `XP_PER_BOT_WIN` | XP for beating the bot at `rps` or `tictactoe` | `10` |
 
 ## Commands
 
@@ -111,7 +111,7 @@ All settings live in `.env`. Invalid values stop startup with an error naming th
 | `/8ball <question>` | Ask the magic 8-ball | Anyone |
 | `/coinflip` | Flip a coin | Anyone |
 | `/rps [member]` | Rock paper scissors against the bot, or a member (picks stay hidden until both choose) | Anyone |
-| `/tictactoe <member>` | Challenge a member to tic-tac-toe | Anyone |
+| `/tictactoe [member]` | Tic-tac-toe against the bot, or a member | Anyone |
 | `/rank [member]` | Show a member's level, XP and server rank | Anyone |
 | `/leaderboard` | Show the server's XP leaderboard | Anyone |
 | `/setxp <member> <amount>`, `/resetxp <member>` | Set or clear a member's XP | Manage Server |
@@ -125,7 +125,7 @@ All settings live in `.env`. Invalid values stop startup with an error naming th
 
 ## XP and levels
 
-XP comes only from winning games: `XP_PER_WIN` for beating another member at `rps` or `tictactoe`, and the smaller `XP_PER_BOT_WIN` for beating the bot at `rps`. Losses, ties and expired games earn nothing, and chatting or voice time earns nothing either. Reaching a new level posts a short announcement (without pinging anyone) in the channel where the game was played.
+XP comes only from winning games: `XP_PER_WIN` for beating another member at `rps` or `tictactoe`, and the smaller `XP_PER_BOT_WIN` for beating the bot at `rps` or `tictactoe`. Losses, ties and expired games earn nothing, and chatting or voice time earns nothing either. Reaching a new level posts a short announcement (without pinging anyone) in the channel where the game was played.
 
 Level `n` needs `100 + 50 * n` XP to complete, so level 1 is 100 XP and level 10 is 3,250 XP in total. Only the total is stored, so the curve can change without migrating data. Members who leave are hidden from the leaderboard but keep their XP if they return.
 
