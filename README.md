@@ -8,7 +8,7 @@ Just a simple and helpful Discord bot that productively wants to make you happy.
 - Hybrid commands: every command works as both `do cmd` and `/cmd`
 - Music in voice channels from YouTube, links, or local files
 - Moderation: kick, ban, timeout, warnings, channel lock and slowmode, with an optional mod-log channel
-- Fun: 8-ball, coin flip, and button-based rock paper scissors and tic-tac-toe
+- Fun: 8-ball, coin flip, and button-based rock paper scissors, tic-tac-toe and connect four
 - XP and levels earned by winning games, with a server leaderboard
 - Utilities: member, server and role lookups, reminders, dice and random picks
 - Per-server settings stored in SQLite
@@ -76,9 +76,9 @@ All settings live in `.env`. Invalid values stop startup with an error naming th
 | `MUSIC_IDLE_TIMEOUT_SECONDS` | Seconds of silence before the bot leaves voice | `120` |
 | `MAX_REMINDERS_PER_USER` | Most pending reminders one person can have | `10` |
 | `MAX_REMINDER_DAYS` | Furthest ahead a reminder can be set, in days | `365` |
-| `GAME_TIMEOUT_SECONDS` | Inactivity before a game of `rps` or `tictactoe` expires | `60` |
+| `GAME_TIMEOUT_SECONDS` | Inactivity before a game of `rps`, `tictactoe` or `connectfour` expires | `60` |
 | `XP_PER_WIN` | XP for winning a game against another member | `50` |
-| `XP_PER_BOT_WIN` | XP for beating the bot at `rps` or `tictactoe` | `10` |
+| `XP_PER_BOT_WIN` | XP for beating the bot at `rps`, `tictactoe` or `connectfour` | `10` |
 
 ## Commands
 
@@ -112,6 +112,7 @@ All settings live in `.env`. Invalid values stop startup with an error naming th
 | `/coinflip` | Flip a coin | Anyone |
 | `/rps [member]` | Rock paper scissors against the bot, or a member (picks stay hidden until both choose) | Anyone |
 | `/tictactoe [member]` | Tic-tac-toe against the bot, or a member | Anyone |
+| `/connectfour [member]` | Connect four against the bot, or a member | Anyone |
 | `/rank [member]` | Show a member's level, XP and server rank | Anyone |
 | `/leaderboard` | Show the server's XP leaderboard | Anyone |
 | `/setxp <member> <amount>`, `/resetxp <member>` | Set or clear a member's XP | Manage Server |
@@ -121,11 +122,11 @@ All settings live in `.env`. Invalid values stop startup with an error naming th
 
 ## Games
 
-`rps` and `tictactoe` are played with buttons and only the players can press them. Games live in memory and end after `GAME_TIMEOUT_SECONDS` of inactivity, so a restart ends any game in progress. Nothing about a game is stored.
+`rps`, `tictactoe` and `connectfour` are played with buttons and only the players can press them. Games live in memory and end after `GAME_TIMEOUT_SECONDS` of inactivity, so a restart ends any game in progress. Nothing about a game is stored.
 
 ## XP and levels
 
-XP comes only from winning games: `XP_PER_WIN` for beating another member at `rps` or `tictactoe`, and the smaller `XP_PER_BOT_WIN` for beating the bot at `rps` or `tictactoe`. Losses, ties and expired games earn nothing, and chatting or voice time earns nothing either. Reaching a new level posts a short announcement (without pinging anyone) in the channel where the game was played.
+XP comes only from winning games: `XP_PER_WIN` for beating another member at `rps`, `tictactoe` or `connectfour`, and the smaller `XP_PER_BOT_WIN` for beating the bot at any of them. Losses, ties and expired games earn nothing, and chatting or voice time earns nothing either. Reaching a new level posts a short announcement (without pinging anyone) in the channel where the game was played.
 
 Level `n` needs `100 + 50 * n` XP to complete, so level 1 is 100 XP and level 10 is 3,250 XP in total. Only the total is stored, so the curve can change without migrating data. Members who leave are hidden from the leaderboard but keep their XP if they return.
 

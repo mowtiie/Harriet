@@ -7,6 +7,8 @@ from discord.ext import commands
 import config
 from core.errors import UserError
 from features.games.answers import flip_coin, pick_answer
+from features.games.connect_four import ConnectFourGame
+from features.games.connect_four_view import ConnectFourView
 from features.games.game_view import WinHandler
 from features.games.rps import RpsGame
 from features.games.rps_view import RpsView
@@ -82,19 +84,48 @@ class Fun(commands.Cog, description="Games and silly answers."):
     @commands.guild_only()
     @app_commands.describe(member="Who to challenge (leave empty to play me)")
     async def tictactoe(self, ctx: commands.Context, member: discord.Member | None = None) -> None:
-        if member is not None:
-            ensure_valid_opponent(ctx.author, member)
-        opponent = member or ctx.guild.me
-        names = {ctx.author.id: ctx.author.display_name, opponent.id: opponent.display_name}
+        opponent = self._resolve_opponent(ctx, member)
         view = TicTacToeView(
             TicTacToeGame(ctx.author.id, opponent.id),
-            names,
+            self._player_names(ctx, opponent),
             config.GAME_TIMEOUT_SECONDS,
             self._win_handler(ctx, vs_bot=member is None),
             bot_id=None if member else opponent.id,
             rng=self._rng,
         )
         view.message = await ctx.send(view=view)
+
+    @commands.hybrid_command(
+        name="connectfour",
+        description="Play connect four against me, or challenge another member",
+        extras={"examples": ["connectfour", "connectfour @user"]},
+    )
+    @commands.guild_only()
+    @app_commands.describe(member="Who to challenge (leave empty to play me)")
+    async def connectfour(
+        self, ctx: commands.Context, member: discord.Member | None = None
+    ) -> None:
+        opponent = self._resolve_opponent(ctx, member)
+        view = ConnectFourView(
+            ConnectFourGame(ctx.author.id, opponent.id),
+            self._player_names(ctx, opponent),
+            config.GAME_TIMEOUT_SECONDS,
+            self._win_handler(ctx, vs_bot=member is None),
+            bot_id=None if member else opponent.id,
+            rng=self._rng,
+        )
+        view.message = await ctx.send(view=view)
+
+    @staticmethod
+    def _resolve_opponent(ctx: commands.Context, member: discord.Member | None) -> discord.Member:
+        if member is None:
+            return ctx.guild.me
+        ensure_valid_opponent(ctx.author, member)
+        return member
+
+    @staticmethod
+    def _player_names(ctx: commands.Context, opponent: discord.Member) -> dict[int, str]:
+        return {ctx.author.id: ctx.author.display_name, opponent.id: opponent.display_name}
 
     def _win_handler(self, ctx: commands.Context, vs_bot: bool) -> WinHandler:
         async def reward_winner(winner_id: int | None) -> str | None:
