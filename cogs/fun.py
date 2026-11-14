@@ -7,6 +7,8 @@ from discord.ext import commands
 import config
 from core.errors import UserError
 from features.games.answers import flip_coin, pick_answer
+from features.games.blackjack import BlackjackGame, new_deck
+from features.games.blackjack_view import BlackjackView
 from features.games.connect_four import ConnectFourGame
 from features.games.connect_four_view import ConnectFourView
 from features.games.game_view import WinHandler
@@ -114,6 +116,25 @@ class Fun(commands.Cog, description="Games and silly answers."):
             bot_id=None if member else opponent.id,
             rng=self._rng,
         )
+        view.message = await ctx.send(view=view)
+
+    @commands.hybrid_command(
+        name="blackjack",
+        description="Play blackjack against me as the dealer",
+        extras={"examples": ["blackjack"]},
+    )
+    @commands.guild_only()
+    async def blackjack(self, ctx: commands.Context) -> None:
+        dealer = ctx.guild.me
+        view = BlackjackView(
+            BlackjackGame(new_deck(self._rng)),
+            self._player_names(ctx, dealer),
+            player_id=ctx.author.id,
+            dealer_id=dealer.id,
+            timeout_seconds=config.GAME_TIMEOUT_SECONDS,
+            on_finish=self._win_handler(ctx, vs_bot=True),
+        )
+        await view.settle_opening_hand()
         view.message = await ctx.send(view=view)
 
     @staticmethod
