@@ -52,7 +52,7 @@ Dependencies point one way: `cogs` → `features` → `views` and `core`. `tests
 - `core` imports nothing from `features`, `views`, `cogs` or `config`.
 - `views` imports nothing from `features` or `cogs`.
 - A feature imports nothing from `cogs` or from another feature. If two features need the same code, move it to `core` (logic) or `views` (display).
-- Cogs may use any feature, and may wire two features together (for example `cogs/fun.py` awards XP).
+- Cogs may use any feature, and may wire two features together (for example `cogs/games.py` awards XP).
 
 ### Database
 
