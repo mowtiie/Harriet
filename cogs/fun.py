@@ -76,19 +76,23 @@ class Fun(commands.Cog, description="Games and silly answers."):
 
     @commands.hybrid_command(
         name="tictactoe",
-        description="Challenge a member to tic-tac-toe",
-        extras={"examples": ["tictactoe @user"]},
+        description="Play tic-tac-toe against me, or challenge another member",
+        extras={"examples": ["tictactoe", "tictactoe @user"]},
     )
     @commands.guild_only()
-    @app_commands.describe(member="Who to challenge")
-    async def tictactoe(self, ctx: commands.Context, member: discord.Member) -> None:
-        ensure_valid_opponent(ctx.author, member)
-        names = {ctx.author.id: ctx.author.display_name, member.id: member.display_name}
+    @app_commands.describe(member="Who to challenge (leave empty to play me)")
+    async def tictactoe(self, ctx: commands.Context, member: discord.Member | None = None) -> None:
+        if member is not None:
+            ensure_valid_opponent(ctx.author, member)
+        opponent = member or ctx.guild.me
+        names = {ctx.author.id: ctx.author.display_name, opponent.id: opponent.display_name}
         view = TicTacToeView(
-            TicTacToeGame(ctx.author.id, member.id),
+            TicTacToeGame(ctx.author.id, opponent.id),
             names,
             config.GAME_TIMEOUT_SECONDS,
-            self._win_handler(ctx, vs_bot=False),
+            self._win_handler(ctx, vs_bot=member is None),
+            bot_id=None if member else opponent.id,
+            rng=self._rng,
         )
         view.message = await ctx.send(view=view)
 
