@@ -3,9 +3,13 @@
 import unittest
 from datetime import datetime, timedelta, timezone
 
+import discord
+
 from features.reminders.reminders_view import (
     LATE_AFTER,
     MAX_TEXT_SHOWN,
+    build_reminder_cancelled_card,
+    build_reminder_set_card,
     build_reminders_view,
     format_delivery,
     format_reminder_line,
@@ -60,6 +64,24 @@ class BuildRemindersViewTests(unittest.TestCase):
 
     def test_empty_list_still_builds(self) -> None:
         self.assertTrue(build_reminders_view([]).to_components())
+
+
+def card_texts(view: discord.ui.LayoutView) -> list[str]:
+    return [item.content for item in view.walk_children() if hasattr(item, "content")]
+
+
+class ReminderConfirmationCardTests(unittest.TestCase):
+    def test_setting_a_reminder_shows_when_it_is_due_and_its_number(self) -> None:
+        texts = card_texts(build_reminder_set_card(4, DUE))
+        stamp = int(DUE.timestamp())
+        self.assertEqual(texts[0], "### ⏰ Reminder set")
+        self.assertEqual(texts[1], f"## <t:{stamp}:R>")
+        self.assertEqual(texts[2], f"-# Due <t:{stamp}:f> · `#4`")
+
+    def test_cancelling_names_the_reminder_that_will_not_arrive(self) -> None:
+        texts = card_texts(build_reminder_cancelled_card(4))
+        expected = ["### ⏰ Reminder cancelled", "## Cancelled", "-# `#4` won't be delivered"]
+        self.assertEqual(texts, expected)
 
 
 if __name__ == "__main__":

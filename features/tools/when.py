@@ -2,7 +2,6 @@ import re
 from datetime import date, datetime, time, timedelta, timezone
 
 from core.durations import parse_duration
-from features.tools.timezones import describe_zone, format_utc_offset
 
 MAX_AHEAD = timedelta(days=5 * 365)
 DAYS_PER_WEEK = 7
@@ -100,17 +99,3 @@ def parse_when(text: str, now: datetime) -> datetime:
         raise ValueError(f"Couldn't read `{text.strip()}` as a time.{hint}")
     clock = _parse_clock("".join(rest), shown=" ".join(words[remaining]))
     return datetime.combine(_pick_date(day, clock, now), clock, tzinfo=now.tzinfo)
-
-
-def format_time_reply(moment: datetime) -> str:
-    stamp = int(moment.timestamp())
-    full, short, relative = (f"<t:{stamp}:{style}>" for style in "FtR")
-    zone = f"{describe_zone(moment.tzinfo)} ({format_utc_offset(moment)})"
-    return "\n".join(
-        [
-            f"**{full}** ({relative})",
-            f"-# Read as {moment:%a %d %b %Y, %H:%M} in {zone}.",
-            "Copy one of these, and everyone sees it in their own timezone:",
-            f"`{full}` · `{short}` · `{relative}`",
-        ]
-    )

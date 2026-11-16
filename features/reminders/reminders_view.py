@@ -5,6 +5,7 @@ import discord
 from discord import ui
 
 from features.reminders.store import Reminder
+from views.result_card import build_result_card
 from views.style import ACCENT_COLOR, divider
 
 MAX_TEXT_SHOWN = 100
@@ -40,6 +41,20 @@ def build_reminders_view(reminders: Sequence[Reminder]) -> ui.LayoutView:
         )
     )
     return view
+
+
+def build_reminder_set_card(reminder_id: int, due_at: datetime) -> ui.LayoutView:
+    return build_result_card(
+        "⏰ Reminder set",
+        discord.utils.format_dt(due_at, "R"),
+        notes=[f"Due {discord.utils.format_dt(due_at, 'f')} · `#{reminder_id}`"],
+    )
+
+
+def build_reminder_cancelled_card(reminder_id: int) -> ui.LayoutView:
+    return build_result_card(
+        "⏰ Reminder cancelled", "Cancelled", notes=[f"`#{reminder_id}` won't be delivered"]
+    )
 
 
 def format_delivery(reminder: Reminder, now: datetime) -> str:

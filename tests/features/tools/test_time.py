@@ -14,7 +14,8 @@ from features.tools.timezones import (
     parse_timezone,
     split_timezone,
 )
-from features.tools.when import format_time_reply, parse_when
+from features.tools.cards import build_time_card
+from features.tools.when import parse_when
 
 PLUS_ONE = timezone(timedelta(hours=1), "UTC+01:00")
 # Saturday 14 November 2026, 15:00 in a fixed UTC+1 zone, so no timezone data is needed.
@@ -178,16 +179,22 @@ class SplitTimezoneTests(unittest.TestCase):
         self.assertIn("isn't installed", str(caught.exception))
 
 
-class FormatTests(unittest.TestCase):
-    def test_the_reply_has_live_timestamps_and_copyable_codes(self) -> None:
-        reply = format_time_reply(at(15, 20))
-        stamp = int(at(15, 20).timestamp())
-        self.assertIn(f"**<t:{stamp}:F>** (<t:{stamp}:R>)", reply)
-        self.assertIn(f"`<t:{stamp}:F>` · `<t:{stamp}:t>` · `<t:{stamp}:R>`", reply)
+def card_text(moment: datetime) -> str:
+    card = build_time_card(moment)
+    return "\n".join(item.content for item in card.walk_children() if hasattr(item, "content"))
 
-    def test_the_reply_says_how_the_time_was_read(self) -> None:
-        reply = format_time_reply(at(15, 20))
-        self.assertIn("Read as Sun 15 Nov 2026, 20:00 in UTC+01:00 (UTC+01:00).", reply)
+
+class FormatTests(unittest.TestCase):
+    def test_the_card_leads_with_a_live_timestamp_and_has_copyable_codes(self) -> None:
+        text = card_text(at(15, 20))
+        stamp = int(at(15, 20).timestamp())
+        self.assertIn(f"## <t:{stamp}:F>", text)
+        self.assertIn(f"-# <t:{stamp}:R> · Read as", text)
+        self.assertIn(f"`<t:{stamp}:F>` · `<t:{stamp}:t>` · `<t:{stamp}:R>`", text)
+
+    def test_the_card_says_how_the_time_was_read(self) -> None:
+        text = card_text(at(15, 20))
+        self.assertIn("Read as Sun 15 Nov 2026, 20:00 in UTC+01:00 (UTC+01:00)", text)
 
     def test_the_timestamp_is_the_real_moment_in_utc(self) -> None:
         stamp = int(at(15, 20).timestamp())
@@ -244,7 +251,7 @@ class RealZoneTests(unittest.TestCase):
     def test_the_reply_names_the_place(self) -> None:
         now = datetime(2026, 11, 14, 9, 0, tzinfo=ZoneInfo("Asia/Tokyo"))
         moment = parse_when("2026-11-14 20:00", now)
-        self.assertIn("in Asia/Tokyo (UTC+09:00)", format_time_reply(moment))
+        self.assertIn("in Asia/Tokyo (UTC+09:00)", card_text(moment))
 
 
 if __name__ == "__main__":

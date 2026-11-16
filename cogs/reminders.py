@@ -8,7 +8,12 @@ from discord.ext import commands, tasks
 import config
 from core.durations import parse_duration
 from core.errors import UserError
-from features.reminders.reminders_view import build_reminders_view, format_delivery
+from features.reminders.reminders_view import (
+    build_reminder_cancelled_card,
+    build_reminder_set_card,
+    build_reminders_view,
+    format_delivery,
+)
 from features.reminders.store import Reminder
 
 log = logging.getLogger(__name__)
@@ -52,8 +57,7 @@ class Reminders(commands.Cog, description="Get reminded about things later."):
             )
         due_at = discord.utils.utcnow() + delay
         reminder_id = await store.add(ctx.author.id, ctx.channel.id, text, due_at)
-        when = discord.utils.format_dt(due_at, "R")
-        await ctx.send(f"I'll remind you {when}. (`#{reminder_id}`)", ephemeral=True)
+        await ctx.send(view=build_reminder_set_card(reminder_id, due_at), ephemeral=True)
 
     @commands.hybrid_command(
         name="reminders",
@@ -73,7 +77,7 @@ class Reminders(commands.Cog, description="Get reminded about things later."):
     async def unremind(self, ctx: commands.Context, reminder_id: int) -> None:
         if not await self.bot.reminder_store.cancel(ctx.author.id, reminder_id):
             raise UserError(f"You have no reminder `#{reminder_id}`.")
-        await ctx.send(f"Cancelled reminder `#{reminder_id}`.", ephemeral=True)
+        await ctx.send(view=build_reminder_cancelled_card(reminder_id), ephemeral=True)
 
     @tasks.loop(seconds=REMINDER_CHECK_SECONDS)
     async def deliver_due(self) -> None:

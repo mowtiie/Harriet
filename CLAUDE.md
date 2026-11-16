@@ -38,7 +38,7 @@ cogs/                          thin command layer, autoloaded (parse args, call 
 core/                          shared infrastructure: database, guild_settings, errors, durations,
                                time_format, presence
 views/                         shared Components V2 building blocks only: style, restricted_view,
-                               profile_view
+                               profile_view, result_card (the card for a command's answer)
 features/<name>/               one package per feature: its logic, SQLite store and its own views
 tests/                         mirrors the layout above
 ```

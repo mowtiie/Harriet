@@ -17,6 +17,18 @@ class DiceRoll:
     sides: int
     modifier: int
 
+    @property
+    def notation(self) -> str:
+        count = "" if self.count == 1 else self.count
+        modifier = f"{self.modifier:+d}" if self.modifier else ""
+        return f"{count}d{self.sides}{modifier}"
+
+
+@dataclass(frozen=True)
+class RollResult:
+    total: int
+    breakdown: str | None
+
 
 def parse_dice(text: str) -> DiceRoll:
     match = _NOTATION.fullmatch("".join(text.lower().split()))
@@ -39,12 +51,12 @@ def roll_dice(dice: DiceRoll, rng: random.Random) -> list[int]:
     return [rng.randint(1, dice.sides) for _ in range(dice.count)]
 
 
-def format_roll(dice: DiceRoll, rolls: list[int]) -> str:
+def summarize_roll(dice: DiceRoll, rolls: list[int]) -> RollResult:
     total = sum(rolls) + dice.modifier
-    modifier = f" {'+' if dice.modifier > 0 else '-'} {abs(dice.modifier)}" if dice.modifier else ""
     if len(rolls) == 1 and not dice.modifier:
-        return f"**{total}**"
+        return RollResult(total, None)
     shown = " + ".join(str(roll) for roll in rolls[:MAX_ROLLS_SHOWN])
     if len(rolls) > MAX_ROLLS_SHOWN:
         shown += " + ..."
-    return f"**{total}**\n-# {shown}{modifier}"
+    modifier = f" {'+' if dice.modifier > 0 else '-'} {abs(dice.modifier)}" if dice.modifier else ""
+    return RollResult(total, shown + modifier)

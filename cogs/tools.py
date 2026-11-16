@@ -4,10 +4,11 @@ from datetime import datetime
 from discord import app_commands
 from discord.ext import commands
 
+from features.tools.cards import build_choose_card, build_roll_card, build_time_card
 from features.tools.choices import split_choices
-from features.tools.dice import format_roll, parse_dice, roll_dice
+from features.tools.dice import parse_dice, roll_dice, summarize_roll
 from features.tools.timezones import split_timezone
-from features.tools.when import format_time_reply, parse_when
+from features.tools.when import parse_when
 from views.style import NO_MENTIONS
 
 
@@ -26,8 +27,8 @@ class Tools(commands.Cog, description="Small helpers for everyday decisions."):
             parsed = parse_dice(dice)
         except ValueError as error:
             raise commands.BadArgument(str(error)) from error
-        result = format_roll(parsed, roll_dice(parsed, self._rng))
-        await ctx.send(f"Rolled `{dice.strip()}`: {result}", allowed_mentions=NO_MENTIONS)
+        result = summarize_roll(parsed, roll_dice(parsed, self._rng))
+        await ctx.send(view=build_roll_card(parsed, result))
 
     @commands.hybrid_command(
         name="time",
@@ -43,7 +44,7 @@ class Tools(commands.Cog, description="Small helpers for everyday decisions."):
             moment = parse_when(text, datetime.now(zone))
         except ValueError as error:
             raise commands.BadArgument(str(error)) from error
-        await ctx.send(format_time_reply(moment), allowed_mentions=NO_MENTIONS)
+        await ctx.send(view=build_time_card(moment))
 
     @commands.hybrid_command(
         name="choose",
@@ -56,7 +57,8 @@ class Tools(commands.Cog, description="Small helpers for everyday decisions."):
             picks = split_choices(options)
         except ValueError as error:
             raise commands.BadArgument(str(error)) from error
-        await ctx.send(f"I choose **{self._rng.choice(picks)}**.", allowed_mentions=NO_MENTIONS)
+        card = build_choose_card(picks, self._rng.choice(picks))
+        await ctx.send(view=card, allowed_mentions=NO_MENTIONS)
 
 
 async def setup(bot: commands.Bot) -> None:

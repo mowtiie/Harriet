@@ -4,6 +4,7 @@ from discord import app_commands
 from discord.ext import commands
 
 from core.errors import UserError
+from features.games.answer_cards import build_coinflip_card, build_eightball_card
 from features.games.answers import flip_coin, pick_answer
 from views.style import NO_MENTIONS
 
@@ -25,14 +26,14 @@ class Fun(commands.Cog, description="Silly answers."):
         question = " ".join(question.split())
         if len(question) > MAX_QUESTION_LENGTH:
             raise UserError(f"Keep the question under {MAX_QUESTION_LENGTH} characters.")
-        answer = pick_answer(self._rng)
-        await ctx.send(f"> {question}\n**{answer}**", allowed_mentions=NO_MENTIONS)
+        card = build_eightball_card(question, pick_answer(self._rng), ctx.author.display_name)
+        await ctx.send(view=card, allowed_mentions=NO_MENTIONS)
 
     @commands.hybrid_command(
         name="coinflip", description="Flip a coin", extras={"examples": ["coinflip"]}
     )
     async def coinflip(self, ctx: commands.Context) -> None:
-        await ctx.send(f"**{flip_coin(self._rng)}**")
+        await ctx.send(view=build_coinflip_card(flip_coin(self._rng)))
 
 
 async def setup(bot: commands.Bot) -> None:

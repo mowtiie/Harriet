@@ -10,9 +10,10 @@ from features.tools.dice import (
     MAX_ROLLS_SHOWN,
     MAX_SIDES,
     DiceRoll,
-    format_roll,
+    RollResult,
     parse_dice,
     roll_dice,
+    summarize_roll,
 )
 
 
@@ -53,22 +54,34 @@ class RollDiceTests(unittest.TestCase):
         self.assertEqual(roll_dice(dice, random.Random(7)), roll_dice(dice, random.Random(7)))
 
 
-class FormatRollTests(unittest.TestCase):
-    def test_single_die_shows_only_the_total(self) -> None:
-        self.assertEqual(format_roll(DiceRoll(1, 20, 0), [14]), "**14**")
+class SummarizeRollTests(unittest.TestCase):
+    def test_single_die_has_nothing_to_break_down(self) -> None:
+        self.assertEqual(summarize_roll(DiceRoll(1, 20, 0), [14]), RollResult(14, None))
 
     def test_multiple_dice_show_each_roll(self) -> None:
-        self.assertEqual(format_roll(DiceRoll(2, 6, 0), [4, 2]), "**6**\n-# 4 + 2")
+        self.assertEqual(summarize_roll(DiceRoll(2, 6, 0), [4, 2]), RollResult(6, "4 + 2"))
 
     def test_modifier_is_added_and_shown(self) -> None:
-        self.assertEqual(format_roll(DiceRoll(2, 6, 3), [4, 2]), "**9**\n-# 4 + 2 + 3")
-        self.assertEqual(format_roll(DiceRoll(1, 20, -2), [10]), "**8**\n-# 10 - 2")
+        self.assertEqual(summarize_roll(DiceRoll(2, 6, 3), [4, 2]), RollResult(9, "4 + 2 + 3"))
+        self.assertEqual(summarize_roll(DiceRoll(1, 20, -2), [10]), RollResult(8, "10 - 2"))
 
     def test_long_roll_lists_are_truncated(self) -> None:
         rolls = [1] * (MAX_ROLLS_SHOWN + 5)
-        text = format_roll(DiceRoll(len(rolls), 6, 0), rolls)
-        self.assertTrue(text.endswith(" + ..."))
-        self.assertIn(f"**{len(rolls)}**", text)
+        result = summarize_roll(DiceRoll(len(rolls), 6, 0), rolls)
+        self.assertEqual(result.total, len(rolls))
+        self.assertTrue(result.breakdown.endswith(" + ..."))
+        self.assertEqual(result.breakdown.count("1"), MAX_ROLLS_SHOWN)
+
+
+class NotationTests(unittest.TestCase):
+    def test_notation_is_written_the_usual_way(self) -> None:
+        self.assertEqual(DiceRoll(1, 20, 0).notation, "d20")
+        self.assertEqual(DiceRoll(2, 6, 3).notation, "2d6+3")
+        self.assertEqual(DiceRoll(4, 8, -1).notation, "4d8-1")
+
+    def test_notation_reads_back_to_the_same_roll(self) -> None:
+        for dice in (DiceRoll(1, 20, 0), DiceRoll(2, 6, 3), DiceRoll(4, 8, -1)):
+            self.assertEqual(parse_dice(dice.notation), dice)
 
 
 class SplitChoicesTests(unittest.TestCase):
